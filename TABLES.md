@@ -41,3 +41,22 @@ Hero carousel banners on the home page.
 **Seed data**: 3 slides (Rare & Unusual Succulents, New Arrivals Weekly, Expert Care Guides).
 
 **Used by**: `GET /api/carousel`, `build.py`
+
+## users
+
+Google-authenticated user accounts with role-based access. **Local only** — not migrated to D1.
+
+| Column | Type | Constraints | Description |
+|---|---|---|---|
+| id | INTEGER | PRIMARY KEY AUTOINCREMENT | Unique user ID |
+| google_id | TEXT | NOT NULL UNIQUE | Google account ID from ID token |
+| email | TEXT | NOT NULL UNIQUE | User's Google email |
+| name | TEXT | | Display name from Google profile |
+| picture_url | TEXT | | Google profile avatar URL |
+| role | TEXT | NOT NULL DEFAULT 'user' | `user` or `admin` |
+| created_at | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP | Account creation time |
+| last_login | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP | Last login time |
+
+**Seed data**: None (users created via Google Sign-In).
+
+**Used by**: `POST /api/auth/login`, `GET /api/auth/me`

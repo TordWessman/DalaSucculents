@@ -1,10 +1,7 @@
 -- Dala Succulents D1 migration schema
 -- Idempotent: safe to re-run
 
-DROP TABLE IF EXISTS products;
-DROP TABLE IF EXISTS carousel_slides;
-
-CREATE TABLE products (
+CREATE TABLE IF NOT EXISTS products (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     slug TEXT NOT NULL UNIQUE,
@@ -18,7 +15,7 @@ CREATE TABLE products (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE carousel_slides (
+CREATE TABLE IF NOT EXISTS carousel_slides (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     image_url TEXT NOT NULL,
     heading TEXT NOT NULL,
@@ -26,6 +23,17 @@ CREATE TABLE carousel_slides (
     button_text TEXT,
     button_link TEXT,
     sort_order INTEGER DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    google_id TEXT NOT NULL UNIQUE,
+    email TEXT NOT NULL UNIQUE,
+    name TEXT,
+    picture_url TEXT,
+    role TEXT NOT NULL DEFAULT 'user',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_login TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Seed products

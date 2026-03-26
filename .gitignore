@@ -9,4 +9,3 @@ dist/
 .wrangler/
 db/seed_data.sql
 db/schema_ddl.sql
-

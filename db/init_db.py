@@ -42,6 +42,19 @@ def init_db():
         )
     ''')
 
+    c.execute('''
+        CREATE TABLE users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            google_id TEXT NOT NULL UNIQUE,
+            email TEXT NOT NULL UNIQUE,
+            name TEXT,
+            picture_url TEXT,
+            role TEXT NOT NULL DEFAULT 'user',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            last_login TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+
     products = [
         (
             "Echeveria 'Lola'",
