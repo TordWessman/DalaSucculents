@@ -3,23 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Euphorbia obesa — Dala Succulents</title>
+  <title>Dala Succulents</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;1,400&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../static/style.css">
+  <link rel="stylesheet" href="static/style.css">
 </head>
 <body>
 
   <!-- Header -->
   <header class="header">
     <div class="header-inner">
-      <a href="../index.html" class="brand">Dala Succulents</a>
+      <a href="index.html" class="brand">Dala Succulents</a>
       <nav>
         <ul class="nav-links">
-          <li><a href="../index.html#shop">Shop</a></li>
-          <li><a href="../index.html#about">About</a></li>
-          <li><a href="../index.html#contact">Contact</a></li>
+          <li><a href="index.html#shop">Shop</a></li>
+          <li><a href="index.html#about">About</a></li>
+          <li><a href="index.html#contact">Contact</a></li>
         </ul>
       </nav>
       <div class="header-icons">
@@ -36,88 +36,30 @@
     </div>
     <div class="mobile-menu" id="mobileMenu">
       <ul>
-        <li><a href="../index.html#shop" onclick="toggleMenu()">Shop</a></li>
-        <li><a href="../index.html#about" onclick="toggleMenu()">About</a></li>
-        <li><a href="../index.html#contact" onclick="toggleMenu()">Contact</a></li>
+        <li><a href="index.html#shop" onclick="toggleMenu()">Shop</a></li>
+        <li><a href="index.html#about" onclick="toggleMenu()">About</a></li>
+        <li><a href="index.html#contact" onclick="toggleMenu()">Contact</a></li>
       </ul>
     </div>
   </header>
 
-  
+  <!-- Breadcrumb -->
   <div class="breadcrumb">
-    <a href="../index.html">Home</a>
-    <span>›</span>
-    <a href="../index.html#shop">Shop</a>
-    <span>›</span>
-    Euphorbia obesa
+    <a href="index.html">Home</a>
+    <span>&rsaquo;</span>
+    <a href="index.html#shop">Shop</a>
+    <span>&rsaquo;</span>
+    <span id="breadcrumbName"></span>
   </div>
 
-  <div class="product-detail">
-    <div class="product-detail-image">
-      <img src="https://picsum.photos/seed/euphorbia9/800/800" alt="Euphorbia obesa">
-    </div>
-    <div class="product-detail-info">
-      <h1>Euphorbia obesa</h1>
-      <div class="product-scientific">Euphorbia</div>
-      <span class="product-price">$29.99</span>
-      <div class="description">A perfectly spherical succulent native to South Africa, sometimes called the Baseball Plant. Euphorbia obesa is slow-growing and extremely drought-tolerant. Handle with care as its sap can be irritating to skin.</div>
-      
-      <span class="btn-shop">Add to Cart</span>
-      
-    </div>
-  </div>
+  <!-- Product Detail -->
+  <div id="productDetail"></div>
 
-  
-  <div class="related-products">
+  <!-- Related Products -->
+  <div class="related-products" id="relatedSection" style="display:none;">
     <h2>You May Also Like</h2>
-    <div class="related-grid">
-      
-      <a href="echeveria-lola.html" class="product-card">
-        <img src="https://picsum.photos/seed/echeveria/400/400" alt="Echeveria 'Lola'" loading="lazy">
-        <div class="product-info">
-          <div class="product-name">Echeveria 'Lola'</div>
-          <div class="product-scientific">Echeveria</div>
-          <div class="product-bottom">
-            <span class="product-price">$24.99</span>
-            
-            <span class="btn-shop">Shop</span>
-            
-          </div>
-        </div>
-      </a>
-      
-      <a href="haworthia-cooperi.html" class="product-card">
-        <img src="https://picsum.photos/seed/haworthia/400/400" alt="Haworthia cooperi" loading="lazy">
-        <div class="product-info">
-          <div class="product-name">Haworthia cooperi</div>
-          <div class="product-scientific">Haworthia</div>
-          <div class="product-bottom">
-            <span class="product-price">$18.50</span>
-            
-            <span class="btn-shop">Shop</span>
-            
-          </div>
-        </div>
-      </a>
-      
-      <a href="lithops-karasmontana.html" class="product-card">
-        <img src="https://picsum.photos/seed/lithops23/400/400" alt="Lithops karasmontana" loading="lazy">
-        <div class="product-info">
-          <div class="product-name">Lithops karasmontana</div>
-          <div class="product-scientific">Lithops</div>
-          <div class="product-bottom">
-            <span class="product-price">$12.00</span>
-            
-            <span class="btn-shop">Shop</span>
-            
-          </div>
-        </div>
-      </a>
-      
-    </div>
+    <div class="related-grid" id="relatedGrid"></div>
   </div>
-  
-
 
   <!-- Footer -->
   <footer class="footer" id="contact">
@@ -169,6 +111,52 @@
     </div>
   </footer>
 
-  <script src="../static/main.js"></script>
+  <script src="static/db.js"></script>
+  <script src="static/render.js"></script>
+  <script src="static/main.js"></script>
+  <script>
+    (function() {
+      var params = new URLSearchParams(window.location.search);
+      var slug = params.get('slug');
+      if (!slug) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      Promise.all([DalaDB.getProduct(slug), DalaDB.getProducts()])
+        .then(function(results) {
+          var product = results[0];
+          var allProducts = results[1];
+
+          if (!product) {
+            window.location.href = 'index.html';
+            return;
+          }
+
+          // Update page title and breadcrumb
+          document.title = product.name + ' \u2014 Dala Succulents';
+          document.getElementById('breadcrumbName').textContent = product.name;
+
+          // Render product detail
+          DalaRender.renderProductDetail(product, document.getElementById('productDetail'));
+
+          // Render related products (first 3 excluding current)
+          var related = allProducts.filter(function(p) { return p.id !== product.id; }).slice(0, 3);
+          if (related.length > 0) {
+            var grid = document.getElementById('relatedGrid');
+            var html = '';
+            for (var i = 0; i < related.length; i++) {
+              html += DalaRender.renderProductCard(related[i]);
+            }
+            grid.innerHTML = html;
+            document.getElementById('relatedSection').style.display = '';
+          }
+        })
+        .catch(function(err) {
+          console.error('Failed to load product:', err);
+          window.location.href = 'index.html';
+        });
+    })();
+  </script>
 </body>
 </html>

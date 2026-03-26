@@ -5,7 +5,7 @@ import http.server
 import os
 import functools
 
-PORT = 8000
+PORT = 8001
 DIST_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'dist')
 
 handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=DIST_DIR)

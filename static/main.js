@@ -1,14 +1,16 @@
-// Carousel
-(function() {
+// Carousel — callable after dynamic content is rendered
+function initCarousel() {
   var track = document.getElementById('carouselTrack');
   if (!track) return;
 
   var currentSlide = 0;
   var dots = document.querySelectorAll('#carouselDots span');
   var totalSlides = track.children.length;
+  if (totalSlides === 0) return;
 
   function updateCarousel() {
     track.style.transform = 'translateX(-' + (currentSlide * 100) + '%)';
+    dots = document.querySelectorAll('#carouselDots span');
     dots.forEach(function(d, i) { d.classList.toggle('active', i === currentSlide); });
   }
 
@@ -31,7 +33,7 @@
   var carousel = document.getElementById('carousel');
   carousel.addEventListener('mouseenter', function() { clearInterval(autoplay); });
   carousel.addEventListener('mouseleave', function() { autoplay = setInterval(window.nextSlide, 5000); });
-})();
+}
 
 // Mobile menu
 function toggleMenu() {
