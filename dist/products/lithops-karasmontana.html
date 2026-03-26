@@ -3,23 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dala Succulents</title>
+  <title>Lithops karasmontana — Dala Succulents</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;1,400&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="static/style.css">
+  <link rel="stylesheet" href="../static/style.css">
 </head>
 <body>
 
   <!-- Header -->
   <header class="header">
     <div class="header-inner">
-      <a href="index.html" class="brand">Dala Succulents</a>
+      <a href="../index.html" class="brand">Dala Succulents</a>
       <nav>
         <ul class="nav-links">
-          <li><a href="index.html#shop">Shop</a></li>
-          <li><a href="index.html#about">About</a></li>
-          <li><a href="index.html#contact">Contact</a></li>
+          <li><a href="../index.html#shop">Shop</a></li>
+          <li><a href="../index.html#about">About</a></li>
+          <li><a href="../index.html#contact">Contact</a></li>
         </ul>
       </nav>
       <div class="header-icons">
@@ -36,76 +36,43 @@
     </div>
     <div class="mobile-menu" id="mobileMenu">
       <ul>
-        <li><a href="index.html#shop" onclick="toggleMenu()">Shop</a></li>
-        <li><a href="index.html#about" onclick="toggleMenu()">About</a></li>
-        <li><a href="index.html#contact" onclick="toggleMenu()">Contact</a></li>
+        <li><a href="../index.html#shop" onclick="toggleMenu()">Shop</a></li>
+        <li><a href="../index.html#about" onclick="toggleMenu()">About</a></li>
+        <li><a href="../index.html#contact" onclick="toggleMenu()">Contact</a></li>
       </ul>
     </div>
   </header>
 
   
-  <!-- Hero Carousel -->
-  <section class="carousel" id="carousel">
-    <div class="carousel-track" id="carouselTrack">
-      
-      <div class="carousel-slide">
-        <img src="https://picsum.photos/seed/succulent1/1200/500" alt="Rare & Unusual Succulents">
-        <div class="carousel-overlay">
-          <div class="carousel-text">
-            <h2>Rare & Unusual Succulents</h2>
-            <p>Curated collection of exotic plants from around the world, delivered to your door.</p>
-            <a class="carousel-btn" href="#shop">Shop Now</a>
-          </div>
-        </div>
-      </div>
-      
-      <div class="carousel-slide">
-        <img src="https://picsum.photos/seed/cactus42/1200/500" alt="New Arrivals Weekly">
-        <div class="carousel-overlay">
-          <div class="carousel-text">
-            <h2>New Arrivals Weekly</h2>
-            <p>Fresh shipments every Tuesday. Follow us for first access to rare finds.</p>
-            <a class="carousel-btn" href="#shop">View New Arrivals</a>
-          </div>
-        </div>
-      </div>
-      
-      <div class="carousel-slide">
-        <img src="https://picsum.photos/seed/plant88/1200/500" alt="Expert Care Guides">
-        <div class="carousel-overlay">
-          <div class="carousel-text">
-            <h2>Expert Care Guides</h2>
-            <p>Every plant ships with a detailed care card. We're here to help your plants thrive.</p>
-            <a class="carousel-btn" href="#shop">Learn More</a>
-          </div>
-        </div>
-      </div>
-      
-    </div>
-    <div class="carousel-dots" id="carouselDots">
-      
-      <span class="active" onclick="goToSlide(0)"></span>
-      
-      <span onclick="goToSlide(1)"></span>
-      
-      <span onclick="goToSlide(2)"></span>
-      
-    </div>
-    <div class="carousel-nav">
-      <button onclick="prevSlide()" aria-label="Previous">&#8592;</button>
-      <button onclick="nextSlide()" aria-label="Next">&#8594;</button>
-    </div>
-  </section>
+  <div class="breadcrumb">
+    <a href="../index.html">Home</a>
+    <span>›</span>
+    <a href="../index.html#shop">Shop</a>
+    <span>›</span>
+    Lithops karasmontana
+  </div>
 
-  <!-- Best Sellers -->
-  <section class="section" id="shop">
-    <div class="section-header">
-      <h2>Best Sellers</h2>
-      <p>Our most popular plants, hand-selected for collectors and beginners alike.</p>
+  <div class="product-detail">
+    <div class="product-detail-image">
+      <img src="https://picsum.photos/seed/lithops23/800/800" alt="Lithops karasmontana">
     </div>
-    <div class="product-grid">
+    <div class="product-detail-info">
+      <h1>Lithops karasmontana</h1>
+      <div class="product-scientific">Lithops</div>
+      <span class="product-price">$12.00</span>
+      <div class="description">These 'living stones' mimic pebbles in their native habitat of southern Africa. Lithops require very little water — a deep soak once a month in the growing season is plenty. They produce daisy-like flowers in autumn.</div>
       
-      <a href="products/echeveria-lola.html" class="product-card">
+      <span class="btn-shop">Add to Cart</span>
+      
+    </div>
+  </div>
+
+  
+  <div class="related-products">
+    <h2>You May Also Like</h2>
+    <div class="related-grid">
+      
+      <a href="echeveria-lola.html" class="product-card">
         <img src="https://picsum.photos/seed/echeveria/400/400" alt="Echeveria 'Lola'" loading="lazy">
         <div class="product-info">
           <div class="product-name">Echeveria 'Lola'</div>
@@ -119,7 +86,7 @@
         </div>
       </a>
       
-      <a href="products/haworthia-cooperi.html" class="product-card">
+      <a href="haworthia-cooperi.html" class="product-card">
         <img src="https://picsum.photos/seed/haworthia/400/400" alt="Haworthia cooperi" loading="lazy">
         <div class="product-info">
           <div class="product-name">Haworthia cooperi</div>
@@ -133,21 +100,7 @@
         </div>
       </a>
       
-      <a href="products/lithops-karasmontana.html" class="product-card">
-        <img src="https://picsum.photos/seed/lithops23/400/400" alt="Lithops karasmontana" loading="lazy">
-        <div class="product-info">
-          <div class="product-name">Lithops karasmontana</div>
-          <div class="product-scientific">Lithops</div>
-          <div class="product-bottom">
-            <span class="product-price">$12.00</span>
-            
-            <span class="btn-shop">Shop</span>
-            
-          </div>
-        </div>
-      </a>
-      
-      <a href="products/adenia-glauca.html" class="product-card">
+      <a href="adenia-glauca.html" class="product-card">
         <img src="https://picsum.photos/seed/adenia7/400/400" alt="Adenia glauca" loading="lazy">
         <div class="product-info">
           <div class="product-name">Adenia glauca</div>
@@ -161,36 +114,9 @@
         </div>
       </a>
       
-      <a href="products/pachypodium-lamerei.html" class="product-card">
-        <img src="https://picsum.photos/seed/pachypod/400/400" alt="Pachypodium lamerei" loading="lazy">
-        <div class="product-info">
-          <div class="product-name">Pachypodium lamerei</div>
-          <div class="product-scientific">Pachypodium</div>
-          <div class="product-bottom">
-            <span class="product-price">$38.00</span>
-            
-            <span class="btn-shop">Shop</span>
-            
-          </div>
-        </div>
-      </a>
-      
-      <a href="products/euphorbia-obesa.html" class="product-card">
-        <img src="https://picsum.photos/seed/euphorbia9/400/400" alt="Euphorbia obesa" loading="lazy">
-        <div class="product-info">
-          <div class="product-name">Euphorbia obesa</div>
-          <div class="product-scientific">Euphorbia</div>
-          <div class="product-bottom">
-            <span class="product-price">$29.99</span>
-            
-            <span class="btn-shop">Shop</span>
-            
-          </div>
-        </div>
-      </a>
-      
     </div>
-  </section>
+  </div>
+  
 
 
   <!-- Footer -->
@@ -243,6 +169,6 @@
     </div>
   </footer>
 
-  <script src="static/main.js"></script>
+  <script src="../static/main.js"></script>
 </body>
 </html>
