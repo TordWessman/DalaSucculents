@@ -1,1 +1,691 @@
-<html>Hello Cactus</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dala Succulents</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;1,400&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --green: #4a7c59;
+      --green-dark: #3a6347;
+      --text: #1a1a1a;
+      --text-light: #6b6b6b;
+      --bg: #fff;
+      --bg-warm: #f9f7f4;
+      --border: #e5e2dd;
+    }
+
+    body {
+      font-family: 'Archivo', sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4 { font-family: 'Newsreader', serif; font-weight: 600; }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* Header */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      font-family: 'Newsreader', serif;
+      font-size: 1.4rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .nav-links a:hover { color: var(--green); }
+
+    .header-icons {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .header-icons button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text);
+      font-size: 1.2rem;
+      padding: 4px;
+    }
+
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--text);
+      margin: 5px 0;
+      transition: 0.3s;
+    }
+
+    .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .hamburger.active span:nth-child(2) { opacity: 0; }
+    .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+    .mobile-menu {
+      display: none;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 20px;
+    }
+
+    .mobile-menu.open { display: block; }
+
+    .mobile-menu ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      font-size: 1rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* Hero Carousel */
+    .carousel {
+      position: relative;
+      overflow: hidden;
+      background: var(--bg-warm);
+    }
+
+    .carousel-track {
+      display: flex;
+      transition: transform 0.6s ease;
+    }
+
+    .carousel-slide {
+      min-width: 100%;
+      position: relative;
+    }
+
+    .carousel-slide img {
+      width: 100%;
+      height: 420px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .carousel-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.05) 60%);
+      display: flex;
+      align-items: center;
+      padding: 0 40px;
+    }
+
+    .carousel-text {
+      color: #fff;
+      max-width: 500px;
+    }
+
+    .carousel-text h2 {
+      font-size: 2.4rem;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .carousel-text p {
+      font-size: 1rem;
+      opacity: 0.9;
+      margin-bottom: 20px;
+    }
+
+    .carousel-btn {
+      display: inline-block;
+      padding: 12px 28px;
+      background: var(--green);
+      color: #fff;
+      font-family: 'Archivo', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .carousel-btn:hover { background: var(--green-dark); }
+
+    .carousel-nav {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .carousel-nav button {
+      width: 40px;
+      height: 40px;
+      border: 1px solid rgba(255,255,255,0.6);
+      background: rgba(0,0,0,0.3);
+      color: #fff;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .carousel-nav button:hover { background: rgba(0,0,0,0.5); }
+
+    .carousel-dots {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+    }
+
+    .carousel-dots span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.5);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .carousel-dots span.active { background: #fff; }
+
+    /* Section */
+    .section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .section-header h2 {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    .section-header p {
+      color: var(--text-light);
+      font-size: 0.95rem;
+    }
+
+    /* Product Grid */
+    .product-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .product-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+    }
+
+    .product-card:hover {
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .product-info {
+      padding: 16px;
+    }
+
+    .product-name {
+      font-family: 'Newsreader', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .product-scientific {
+      font-size: 0.82rem;
+      color: var(--text-light);
+      font-style: italic;
+      margin-bottom: 10px;
+    }
+
+    .product-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .product-price {
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+
+    .btn-shop {
+      padding: 8px 20px;
+      background: var(--green);
+      color: #fff;
+      border: none;
+      font-family: 'Archivo', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-shop:hover { background: var(--green-dark); }
+
+    .btn-sold-out {
+      padding: 8px 20px;
+      background: transparent;
+      color: var(--text-light);
+      border: 1px solid var(--border);
+      font-family: 'Archivo', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      cursor: default;
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--bg-warm);
+      border-top: 1px solid var(--border);
+      padding: 60px 20px 30px;
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+    .footer-brand h3 {
+      font-size: 1.4rem;
+      margin-bottom: 12px;
+    }
+
+    .footer-brand p {
+      color: var(--text-light);
+      font-size: 0.9rem;
+      max-width: 300px;
+    }
+
+    .footer-links h4 {
+      font-size: 0.85rem;
+      font-family: 'Archivo', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+
+    .footer-links ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-links a {
+      color: var(--text-light);
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--green); }
+
+    .newsletter h4 {
+      font-size: 0.85rem;
+      font-family: 'Archivo', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+
+    .newsletter p {
+      color: var(--text-light);
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+    }
+
+    .newsletter-form {
+      display: flex;
+      gap: 8px;
+    }
+
+    .newsletter-form input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      font-family: 'Archivo', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .newsletter-form input:focus { border-color: var(--green); }
+
+    .newsletter-form button {
+      padding: 10px 20px;
+      background: var(--green);
+      color: #fff;
+      border: none;
+      font-family: 'Archivo', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .newsletter-form button:hover { background: var(--green-dark); }
+
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 40px auto 0;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+      color: var(--text-light);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 16px;
+    }
+
+    .social-links a:hover { color: var(--green); }
+
+    /* Responsive */
+    @media (min-width: 600px) {
+      .product-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-inner { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (min-width: 900px) {
+      .product-grid { grid-template-columns: repeat(3, 1fr); }
+      .footer-inner { grid-template-columns: 1.5fr 1fr 1fr 1.5fr; }
+      .carousel-slide img { height: 500px; }
+      .carousel-text h2 { font-size: 3rem; }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hamburger { display: block; }
+      .carousel-slide img { height: 300px; }
+      .carousel-overlay { padding: 0 20px; }
+      .carousel-text h2 { font-size: 1.6rem; }
+      .carousel-text p { font-size: 0.9rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="brand">Dala Succulents</a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="#shop">Shop</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="header-icons">
+        <button aria-label="Search">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+        <button aria-label="Cart">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        </button>
+        <button class="hamburger" aria-label="Menu" onclick="toggleMenu()">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <ul>
+        <li><a href="#shop" onclick="toggleMenu()">Shop</a></li>
+        <li><a href="#about" onclick="toggleMenu()">About</a></li>
+        <li><a href="#contact" onclick="toggleMenu()">Contact</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- Hero Carousel -->
+  <section class="carousel" id="carousel">
+    <div class="carousel-track" id="carouselTrack">
+      <div class="carousel-slide">
+        <img src="https://picsum.photos/seed/succulent1/1200/500" alt="Succulent collection">
+        <div class="carousel-overlay">
+          <div class="carousel-text">
+            <h2>Rare & Unusual Succulents</h2>
+            <p>Curated collection of exotic plants from around the world, delivered to your door.</p>
+            <button class="carousel-btn" onclick="document.getElementById('shop').scrollIntoView({behavior:'smooth'})">Shop Now</button>
+          </div>
+        </div>
+      </div>
+      <div class="carousel-slide">
+        <img src="https://picsum.photos/seed/cactus42/1200/500" alt="Desert plants">
+        <div class="carousel-overlay">
+          <div class="carousel-text">
+            <h2>New Arrivals Weekly</h2>
+            <p>Fresh shipments every Tuesday. Follow us for first access to rare finds.</p>
+            <button class="carousel-btn">View New Arrivals</button>
+          </div>
+        </div>
+      </div>
+      <div class="carousel-slide">
+        <img src="https://picsum.photos/seed/plant88/1200/500" alt="Plant care">
+        <div class="carousel-overlay">
+          <div class="carousel-text">
+            <h2>Expert Care Guides</h2>
+            <p>Every plant ships with a detailed care card. We're here to help your plants thrive.</p>
+            <button class="carousel-btn">Learn More</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="carousel-dots" id="carouselDots">
+      <span class="active" onclick="goToSlide(0)"></span>
+      <span onclick="goToSlide(1)"></span>
+      <span onclick="goToSlide(2)"></span>
+    </div>
+    <div class="carousel-nav">
+      <button onclick="prevSlide()" aria-label="Previous">&#8592;</button>
+      <button onclick="nextSlide()" aria-label="Next">&#8594;</button>
+    </div>
+  </section>
+
+  <!-- Best Sellers -->
+  <section class="section" id="shop">
+    <div class="section-header">
+      <h2>Best Sellers</h2>
+      <p>Our most popular plants, hand-selected for collectors and beginners alike.</p>
+    </div>
+    <div class="product-grid" id="productGrid"></div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer" id="contact">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <h3>Dala Succulents</h3>
+        <p>Specializing in rare and unusual succulents, cacti, and caudiciform plants since 2020.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="#">All Plants</a></li>
+          <li><a href="#">Succulents</a></li>
+          <li><a href="#">Cacti</a></li>
+          <li><a href="#">Caudiciforms</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Info</h4>
+        <ul>
+          <li><a href="#">Shipping Policy</a></li>
+          <li><a href="#">Care Guides</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Contact Us</a></li>
+        </ul>
+      </div>
+      <div class="newsletter">
+        <h4>Stay in the Loop</h4>
+        <p>Get notified about new arrivals and restocks.</p>
+        <form class="newsletter-form" onsubmit="event.preventDefault(); this.querySelector('input').value=''; alert('Thanks for subscribing!');">
+          <input type="email" placeholder="your@email.com" required>
+          <button type="submit">Join</button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Dala Succulents. All rights reserved.</span>
+      <div class="social-links">
+        <a href="#" aria-label="Instagram">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a href="#" aria-label="TikTok">
+          <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.11v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V8.98a8.18 8.18 0 004.76 1.52V7.05a4.84 4.84 0 01-1-.36z"/></svg>
+        </a>
+        <a href="#" aria-label="Facebook">
+          <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Product data
+    const products = [
+      { name: "Echeveria 'Lola'", scientific: "Echeveria", price: 24.99, image: "https://picsum.photos/seed/echeveria/400/400", soldOut: false },
+      { name: "Haworthia cooperi", scientific: "Haworthia", price: 18.50, image: "https://picsum.photos/seed/haworthia/400/400", soldOut: false },
+      { name: "Lithops karasmontana", scientific: "Lithops", price: 12.00, image: "https://picsum.photos/seed/lithops23/400/400", soldOut: false },
+      { name: "Adenia glauca", scientific: "Adenia", price: 45.00, image: "https://picsum.photos/seed/adenia7/400/400", soldOut: true },
+      { name: "Pachypodium lamerei", scientific: "Pachypodium", price: 38.00, image: "https://picsum.photos/seed/pachypod/400/400", soldOut: false },
+      { name: "Euphorbia obesa", scientific: "Euphorbia", price: 29.99, image: "https://picsum.photos/seed/euphorbia9/400/400", soldOut: false }
+    ];
+
+    // Render products
+    const grid = document.getElementById('productGrid');
+    products.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      card.innerHTML = `
+        <img src="${p.image}" alt="${p.name}" loading="lazy">
+        <div class="product-info">
+          <div class="product-name">${p.name}</div>
+          <div class="product-scientific">${p.scientific}</div>
+          <div class="product-bottom">
+            <span class="product-price">$${p.price.toFixed(2)}</span>
+            ${p.soldOut
+              ? '<button class="btn-sold-out" disabled>Sold Out</button>'
+              : '<button class="btn-shop">Shop</button>'}
+          </div>
+        </div>`;
+      grid.appendChild(card);
+    });
+
+    // Carousel
+    let currentSlide = 0;
+    const track = document.getElementById('carouselTrack');
+    const dots = document.querySelectorAll('#carouselDots span');
+    const totalSlides = 3;
+
+    function updateCarousel() {
+      track.style.transform = `translateX(-${currentSlide * 100}%)`;
+      dots.forEach((d, i) => d.classList.toggle('active', i === currentSlide));
+    }
+
+    function nextSlide() {
+      currentSlide = (currentSlide + 1) % totalSlides;
+      updateCarousel();
+    }
+
+    function prevSlide() {
+      currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+      updateCarousel();
+    }
+
+    function goToSlide(i) {
+      currentSlide = i;
+      updateCarousel();
+    }
+
+    let autoplay = setInterval(nextSlide, 5000);
+
+    document.getElementById('carousel').addEventListener('mouseenter', () => clearInterval(autoplay));
+    document.getElementById('carousel').addEventListener('mouseleave', () => { autoplay = setInterval(nextSlide, 5000); });
+
+    // Mobile menu
+    function toggleMenu() {
+      document.querySelector('.hamburger').classList.toggle('active');
+      document.getElementById('mobileMenu').classList.toggle('open');
+    }
+  </script>
+</body>
+</html>
