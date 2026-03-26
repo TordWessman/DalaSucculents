@@ -1,0 +1,7 @@
+name = "dalasucculents"
+pages_build_output_dir = "dist"
+
+[[d1_databases]]
+binding = "dala_succulents_db"
+database_name = "dala-succulents-db"
+database_id = "768dc4de-e373-466b-b04b-883ef0e013d2"

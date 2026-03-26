@@ -6,4 +6,7 @@ __pycache__/
 .claude/settings.local.json
 frontend/node_modules/
 dist/
+.wrangler/
+db/seed_data.sql
+db/schema_ddl.sql
 
