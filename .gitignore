@@ -4,4 +4,6 @@ __pycache__/
 .venv/
 .env
 .claude/settings.local.json
+frontend/node_modules/
+dist/
 

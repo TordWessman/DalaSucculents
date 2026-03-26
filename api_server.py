@@ -3,7 +3,6 @@
 
 import json
 import os
-import shutil
 import sqlite3
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from urllib.parse import urlparse
@@ -11,7 +10,6 @@ from urllib.parse import urlparse
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, 'dala.db')
 DIST_DIR = os.path.join(BASE_DIR, 'dist')
-STATIC_SRC = os.path.join(BASE_DIR, 'static')
 PORT = 8000
 
 
@@ -41,6 +39,10 @@ class DalaHandler(SimpleHTTPRequestHandler):
         elif path == '/api/carousel':
             self._serve_carousel()
         else:
+            # SPA fallback: serve index.html for paths that don't match a real file
+            file_path = os.path.join(DIST_DIR, path.lstrip('/'))
+            if not os.path.isfile(file_path):
+                self.path = '/index.html'
             super().do_GET()
 
     def _send_json(self, data, status=200):
@@ -89,22 +91,12 @@ class DalaHandler(SimpleHTTPRequestHandler):
         self._send_json({"results": slides, "success": True})
 
 
-def copy_static():
-    """Copy static/ → dist/static/ on startup."""
-    dest = os.path.join(DIST_DIR, 'static')
-    os.makedirs(dest, exist_ok=True)
-    for fname in os.listdir(STATIC_SRC):
-        shutil.copy2(os.path.join(STATIC_SRC, fname), os.path.join(dest, fname))
-    print(f"Copied static assets to {dest}")
-
-
 def main():
     if not os.path.exists(DB_PATH):
         print(f"Error: {DB_PATH} not found. Run: python db/init_db.py")
         return
 
     os.makedirs(DIST_DIR, exist_ok=True)
-    copy_static()
 
     server = HTTPServer(('', PORT), DalaHandler)
     print(f"Serving on http://localhost:{PORT}")

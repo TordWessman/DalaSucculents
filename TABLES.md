@@ -1,0 +1,43 @@
+# Database Tables (dala.db)
+
+SQLite database used by the API server and build system. Schema defined in `db/schema.sql`, seeded by `db/init_db.py`.
+
+## products
+
+Plant inventory. Each row is a product listing on the site.
+
+| Column | Type | Constraints | Description |
+|---|---|---|---|
+| id | INTEGER | PRIMARY KEY AUTOINCREMENT | Unique product ID |
+| name | TEXT | NOT NULL | Display name (e.g. "Echeveria 'Lola'") |
+| slug | TEXT | NOT NULL UNIQUE | URL-safe identifier (e.g. "echeveria-lola") |
+| scientific_name | TEXT | | Genus or species name, shown in italic |
+| description | TEXT | | Full product description for detail page |
+| price | REAL | NOT NULL | Price in USD |
+| image_url | TEXT | | Thumbnail image (400x400) |
+| image_url_large | TEXT | | Detail page image (800x800) |
+| sold_out | INTEGER | DEFAULT 0 | 1 = sold out, 0 = available |
+| sort_order | INTEGER | DEFAULT 0 | Display order (ascending) |
+| created_at | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP | Row creation time |
+
+**Seed data**: 6 products (Echeveria 'Lola', Haworthia cooperi, Lithops karasmontana, Adenia glauca, Pachypodium lamerei, Euphorbia obesa).
+
+**Used by**: `GET /api/products`, `GET /api/products/<slug>`, `build.py`
+
+## carousel_slides
+
+Hero carousel banners on the home page.
+
+| Column | Type | Constraints | Description |
+|---|---|---|---|
+| id | INTEGER | PRIMARY KEY AUTOINCREMENT | Unique slide ID |
+| image_url | TEXT | NOT NULL | Banner image (1200x500) |
+| heading | TEXT | NOT NULL | Large overlay text |
+| subheading | TEXT | | Smaller description text |
+| button_text | TEXT | | CTA button label |
+| button_link | TEXT | | CTA button href |
+| sort_order | INTEGER | DEFAULT 0 | Display order (ascending) |
+
+**Seed data**: 3 slides (Rare & Unusual Succulents, New Arrivals Weekly, Expert Care Guides).
+
+**Used by**: `GET /api/carousel`, `build.py`

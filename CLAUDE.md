@@ -4,23 +4,30 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Dala Succulents is a static e-commerce site for selling rare succulents. A Python build system generates static HTML from SQLite data and Jinja2 templates.
+Dala Succulents is an e-commerce site for selling rare succulents. A React SPA (Vite) fetches data dynamically from a Python API server backed by SQLite. The data-fetching layer is injectable so a Cloudflare D1 backend can replace the Python server in production.
 
 ## Commands
 
 ```bash
-# Setup
+# Setup (Python)
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
+
+# Setup (Frontend)
+cd frontend && npm install
 
 # Initialize database with seed data
 python db/init_db.py
 
-# Build static site (outputs to dist/)
-python build.py
+# Development — run both in separate terminals:
+python api_server.py              # API server on port 8000
+cd frontend && npm run dev        # Vite dev server on port 3000 (proxies /api → 8000)
 
-# Run dev server on port 8000 (serves dist/)
-python serve.py
+# Production build (outputs to dist/)
+cd frontend && npm run build
+
+# Serve production build (API + static from dist/)
+python api_server.py
 
 # Import data from Baserow CMS (requires .env with BASEROW_API_TOKEN and BASEROW_TABLE_ID)
 python baserow_to_mysql.py
@@ -28,18 +35,33 @@ python baserow_to_mysql.py
 
 ## Architecture
 
-**Static site generator** — no runtime server. `build.py` reads from SQLite (`dala.db`), renders Jinja2 templates, and writes HTML/CSS/JS to `dist/`.
+**React SPA** — `frontend/` contains a Vite + React app with React Router for client-side routing. All data is fetched from the API at runtime.
 
-- `build.py` — Main build script. Queries products and carousel_slides tables, renders `templates/home.html` and individual `templates/product.html` pages, copies `static/` assets to `dist/`.
-- `db/init_db.py` — Seeds SQLite with sample products and carousel data.
+- `frontend/src/main.jsx` — Entry point: BrowserRouter + DataProvider + App
+- `frontend/src/App.jsx` — Routes: `/` → HomePage, `/products/:slug` → ProductPage
+- `frontend/src/services/ApiDataService.js` — Fetch-based data service (baseUrl configurable via `VITE_API_BASE_URL` env var). Factory function returns `{ getProducts, getProduct, getCarouselSlides }`.
+- `frontend/src/services/DataContext.jsx` — React context + DataProvider + useDataService hook. Allows swapping the data service implementation (e.g., for Cloudflare D1).
+- `frontend/src/components/` — Layout, Header, Footer, Carousel, ProductCard, ProductGrid, Breadcrumb
+- `frontend/src/pages/` — HomePage (carousel + product grid), ProductPage (detail + related products)
+- `frontend/src/style.css` — All styles (copied from `static/style.css`). Uses CSS variables, responsive grid (breakpoints at 600px, 900px).
+- `frontend/vite.config.js` — Dev server on port 3000, proxies `/api` to localhost:8000, builds to `../dist/`.
+
+**API Server** — `api_server.py` serves REST endpoints and static files from `dist/` with SPA fallback (serves `index.html` for unmatched paths).
+
+- `api_server.py` — REST API (`/api/products`, `/api/products/<slug>`, `/api/carousel`) + SPA fallback for client-side routing
+- `db/init_db.py` — Seeds SQLite with sample products and carousel data
 - `baserow_to_mysql.py` — Pulls data from Baserow cloud CMS into SQLite. Configured via `.env`.
-- `templates/` — Jinja2 templates. `base.html` is the layout; `home.html` and `product.html` extend it.
-- `static/` — CSS and JS served as-is. `style.css` uses CSS variables, responsive grid (breakpoints at 600px, 900px). `main.js` handles carousel and mobile menu.
-- `dist/` — Generated output, not committed. Deploy this directory to any static host.
+- `static/style.css` — Source of truth for styles (copied into `frontend/src/` during setup)
+- `dist/` — Vite build output, not committed. In production, served by `api_server.py`.
 
 **Database tables**: `products` (id, name, slug, scientific_name, description, price, image_url, image_url_large, sold_out, sort_order) and `carousel_slides` (id, image_url, heading, subheading, button_text, button_link, sort_order).
+
+## Database Documentation
+
+When `dala.db` schema changes (new tables, altered columns, seed data changes), update `TABLES.md` to match. This includes changes made via `db/schema.sql`, `db/init_db.py`, or `baserow_to_mysql.py`.
 
 ## Style Notes
 
 - Font is Comic Sans MS — this is intentional.
 - Color scheme uses green (#4a7c59) with warm whites.
+- CSS class names in React components must match `static/style.css` exactly.
