@@ -100,7 +100,7 @@
         "Step 3: Ensure schema creation runs before data insertion",
         "Step 4: Run verification"
       ],
-      "status": "pending",
+      "status": "complete",
       "notes": "Keep the same D1 database binding (DB) from wrangler.toml"
     },
 

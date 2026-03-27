@@ -34,8 +34,8 @@ wrangler d1 execute "$DB_NAME" --remote --file="$SCRIPT_DIR/schema.sql"
 echo "==> Exporting data from local dala.db..."
 > "$SEED_SQL"  # truncate
 
-# Get list of tables from local db
-TABLES=$(sqlite3 "$DB_PATH" "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name;")
+# Tables in dependency order (parents before children)
+TABLES="genera countries plants plant_countries specimens cart_items"
 
 for TABLE in $TABLES; do
   if is_skipped "$TABLE"; then
@@ -66,4 +66,4 @@ else
 fi
 
 echo "==> Done. Verify with:"
-echo "    wrangler d1 execute $DB_NAME --remote --command=\"SELECT count(*) FROM products\""
+echo "    wrangler d1 execute $DB_NAME --remote --command=\"SELECT count(*) FROM plants\""
