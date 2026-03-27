@@ -15,3 +15,18 @@ Append-only log of session activity.
 - **Verification**: schema-check PASS, api_server.py syntax OK, import_baserow.py syntax OK
 - **Blockers**: None
 
+---
+
+## 2026-03-27 — Feature: seed-data
+- **Status**: complete
+- **What was done**:
+  - Rewrote `db/init_db.py` to apply `db/schema.sql` then seed with realistic botanical data
+  - Seeded 5 genera: Adenia, Ariocarpus, Echeveria, Euphorbia, Haworthia (with correct families)
+  - Seeded 8 countries: ETH, KEN, SOM, TZA, MEX, ZAF, MOZ, NAM
+  - Seeded 10 plants with full cultivation data (vegetation period, substrate, winter temp, watering, exposure), conservation data (Red List, CITES, LLIFLE URLs), and author citations
+  - Seeded plant_countries relationships for all 10 plants
+  - Seeded 8 specimens linked to plants (4 for_sale, 4 not) with propagation info
+  - Used realistic data matching Baserow sample rows from refactor.md
+- **Verification**: schema-check PASS, api_server.py syntax OK, import_baserow.py syntax OK, frontend build OK
+- **Blockers**: None
+
