@@ -130,3 +130,20 @@ Google-authenticated user accounts with role-based access. **Local only** — no
 **Seed data**: None (users created via Google Sign-In).
 
 **Used by**: `POST /api/auth/login`, `GET /api/auth/me`
+
+## plant_images
+
+Plant-level image gallery. One-to-many relationship with plants. Backed by Cloudflare R2 storage. **Local only** — rows not migrated to D1 (schema is applied, but dev and prod maintain separate images).
+
+| Column | Type | Constraints | Description |
+|---|---|---|---|
+| id | INTEGER | PRIMARY KEY AUTOINCREMENT | Unique image ID |
+| plant_id | INTEGER | NOT NULL, FK plants(id) ON DELETE CASCADE | Reference to parent plant |
+| image_url | TEXT | NOT NULL | Full public URL to image in R2 |
+| caption | TEXT | | Optional image caption |
+| sort_order | INTEGER | DEFAULT 0 | Display order (ascending) |
+| created_at | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP | Upload time |
+
+**Seed data**: None (images uploaded via admin UI).
+
+**Used by**: `GET /api/plants/:slug` (nested), `GET /api/plants/:slug/images`, `POST /api/plants/:slug/images`, `DELETE /api/plants/:slug/images/:id`

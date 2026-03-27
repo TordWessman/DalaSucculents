@@ -24,7 +24,7 @@ cd frontend && npm install && cd ..
 cp .env.example .env
 ```
 
-Edit `.env` and fill in the values. See `.env.example` for the full list of variables. For Google OAuth setup, see [Appendix A](#appendix-a-google-oauth-client-id-setup).
+Edit `.env` and fill in the values. See `.env.example` for the full list of variables. For Google OAuth setup, see [Appendix A](#appendix-a-google-oauth-client-id-setup). For R2 image storage, see [Appendix C](#appendix-c-cloudflare-r2-image-storage).
 
 ## Database Setup
 
@@ -117,3 +117,33 @@ You can also add `www.<your-domain>` as a second custom domain.
 - The CNAME record points your domain to `<your-project>.pages.dev`
 - Cloudflare handles SSL automatically
 - For `www` → apex redirect (or vice versa), add a **Redirect Rule** under your domain's settings
+
+## Appendix C: Cloudflare R2 Image Storage
+
+Plant images are stored in a Cloudflare R2 bucket. Dev and prod share the same bucket but use separate path prefixes (`dev/` and `prod/`).
+
+### One-time setup
+
+1. Create the bucket:
+   ```bash
+   wrangler r2 bucket create dala-succulents-images
+   ```
+2. Enable **public access** on the bucket in the Cloudflare dashboard (R2 → bucket → Settings → Public access)
+3. Note the public URL (e.g. `https://pub-<hash>.r2.dev`)
+
+### Dev server (Python)
+
+Add these to your `.env`:
+```
+R2_ACCOUNT_ID=<your-account-id>
+R2_ACCESS_KEY_ID=<your-r2-api-token-access-key>
+R2_SECRET_ACCESS_KEY=<your-r2-api-token-secret>
+R2_BUCKET_NAME=dala-succulents-images
+R2_PUBLIC_URL=https://pub-<hash>.r2.dev
+```
+
+To create R2 API tokens: Cloudflare dashboard → R2 → Manage R2 API Tokens → Create API Token (Object Read & Write permissions).
+
+### Prod (Cloudflare Pages)
+
+The R2 bucket is bound in `wrangler.toml` as `IMAGES_BUCKET`. Set `R2_PUBLIC_URL` as a Cloudflare Pages environment variable (Settings → Environment variables).

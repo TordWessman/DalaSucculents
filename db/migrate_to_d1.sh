@@ -10,7 +10,7 @@ DB_PATH="$PROJECT_DIR/dala.db"
 SEED_SQL="$SCRIPT_DIR/seed_data.sql"
 
 # Tables to skip (will not be migrated). Example: SKIP_TABLES=(orders customers)
-SKIP_TABLES=(users)
+SKIP_TABLES=(users plant_images)
 
 if [ ! -f "$DB_PATH" ]; then
   echo "Error: $DB_PATH not found. Run: python db/init_db.py" >&2

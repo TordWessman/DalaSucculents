@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useDataService } from '../services/DataContext';
+import { useAuth } from '../services/AuthContext';
 import { formatBotanicalName } from '../utils/botanicalName';
 import CultivationTable from '../components/CultivationTable';
 import SpecimenList from '../components/SpecimenList';
+import PlantImageGallery from '../components/PlantImageGallery';
 
 export default function PlantProfilePage() {
   const { slug } = useParams();
   const dataService = useDataService();
+  const { user } = useAuth();
   const [plant, setPlant] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -36,6 +39,8 @@ export default function PlantProfilePage() {
   if (!plant) return <div className="section"><p>Plant not found.</p></div>;
 
   const nameParts = formatBotanicalName(plant);
+  const isCloudflare = import.meta.env.VITE_DATA_BACKEND === 'cloudflare';
+  const canUpload = isCloudflare ? true : user?.role === 'admin';
 
   return (
     <div className="plant-profile">
@@ -55,6 +60,8 @@ export default function PlantProfilePage() {
         </h1>
         <p className="plant-taxonomy">{plant.family} — {plant.genus}</p>
       </div>
+
+      <PlantImageGallery images={plant.images} slug={slug} canUpload={canUpload} />
 
       <div className="plant-profile-body">
         <section className="plant-section">

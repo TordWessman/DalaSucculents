@@ -72,12 +72,14 @@ cd frontend && npm run build && cd .. && wrangler pages deploy dist
 - `functions/api/products/index.js` — `GET /api/products` (lists all products)
 - `functions/api/products/[slug].js` — `GET /api/products/:slug` (single product by slug)
 - `functions/api/carousel.js` — `GET /api/carousel` (carousel slides)
-- `wrangler.toml` — Pages config with D1 binding (`DB`)
-- `db/migrate_to_d1.sh` — Migrates local dala.db schema + data to remote D1
+- `wrangler.toml` — Pages config with D1 binding (`DB`) and R2 binding (`IMAGES_BUCKET`)
+- `db/migrate_to_d1.sh` — Migrates local dala.db schema + data to remote D1 (skips `users` and `plant_images`)
 - `frontend/.env.development` / `.env.production` — `VITE_DATA_BACKEND` controls service selection (`local` or `cloudflare`)
 - `frontend/src/main.jsx` — Switches between `ApiDataService` (local) and `D1DataService` (cloudflare) based on env var
 
-**Database tables**: `products` (id, name, slug, scientific_name, description, price, image_url, image_url_large, sold_out, sort_order) and `carousel_slides` (id, image_url, heading, subheading, button_text, button_link, sort_order).
+**Database tables**: `products` (id, name, slug, scientific_name, description, price, image_url, image_url_large, sold_out, sort_order), `carousel_slides` (id, image_url, heading, subheading, button_text, button_link, sort_order), and `plant_images` (id, plant_id, image_url, caption, sort_order, created_at).
+
+**Image uploads** — Plant images are stored in Cloudflare R2 (`dala-succulents-images` bucket). Dev uses `dev/` prefix, prod uses `prod/`. Dev requires admin auth; prod allows all uploads. Endpoints: `GET/POST /api/plants/:slug/images`, `DELETE /api/plants/:slug/images/:id`. Python dev server uses boto3; prod uses R2 binding.
 
 ## Database Documentation
 

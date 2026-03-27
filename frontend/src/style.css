@@ -765,6 +765,90 @@ a { color: inherit; text-decoration: none; }
   color: var(--text-light);
 }
 
+/* Plant Image Gallery */
+.plant-image-gallery {
+  margin-bottom: 32px;
+}
+
+.plant-image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.plant-image-item {
+  position: relative;
+}
+
+.plant-image-item img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.plant-image-caption {
+  font-size: 0.82rem;
+  color: var(--text-light);
+  margin-top: 4px;
+}
+
+.plant-image-delete {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 28px;
+  height: 28px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border: none;
+  font-family: 'Comic Sans MS', cursive;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.plant-image-delete:hover {
+  background: rgba(0, 0, 0, 0.85);
+}
+
+.plant-image-upload {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  padding: 16px;
+  border: 2px dashed var(--border);
+  background: var(--bg-warm);
+}
+
+.plant-image-caption-input {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  font-family: 'Comic Sans MS', cursive;
+  font-size: 0.85rem;
+  flex: 1;
+  min-width: 150px;
+}
+
+.plant-image-caption-input:focus {
+  border-color: var(--green);
+  outline: none;
+}
+
+.plant-image-error {
+  color: #c44;
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+}
+
 /* Product Detail */
 .product-detail {
   max-width: 1200px;

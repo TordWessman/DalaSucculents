@@ -37,6 +37,12 @@ export async function onRequestGet(context) {
     ORDER BY specimen_code
   `).bind(plant.id).all();
 
+  const { results: images } = await db.prepare(`
+    SELECT id, image_url, caption, sort_order
+    FROM plant_images WHERE plant_id = ?
+    ORDER BY sort_order, id
+  `).bind(plant.id).all();
+
   const result = {
     id: plant.id,
     slug: plant.slug,
@@ -61,6 +67,7 @@ export async function onRequestGet(context) {
     countries: countries.map(r => r.name),
     notes: plant.notes,
     specimens: specimens.map(s => ({ ...s, for_sale: Boolean(s.for_sale) })),
+    images,
   };
 
   return Response.json({ result, success: true }, {
