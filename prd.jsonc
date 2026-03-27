@@ -133,7 +133,7 @@
         "Step 5: Ensure D1 binding (env.DB) is used correctly in all new functions",
         "Step 6: Run verification"
       ],
-      "status": "pending",
+      "status": "complete",
       "notes": "Must produce identical response shapes as the Python API endpoints"
     },
     {

@@ -68,3 +68,16 @@ Append-only log of session activity.
   - Updated startup banner to show new API routes
 - **Verification**: schema-check PASS, api_server.py syntax OK, import_baserow.py syntax OK, frontend build OK
 - **Blockers**: None
+
+---
+
+## 2026-03-27 — Feature: cloudflare-plant-functions
+- **Status**: complete
+- **What was done**:
+  - Created `functions/api/plants/index.js` — GET handler listing all plants with genus/family joins, display_name (subsp/var/f./cultivar), specimen_count, for_sale_count, image_url
+  - Created `functions/api/plants/[slug].js` — GET handler for single plant profile with cultivation, conservation, countries, specimens (identical response shape to Python API)
+  - Created `functions/api/filters.js` — GET handler returning distinct values for family, genus, vegetation_period, exposure
+  - Deleted old `functions/api/products/index.js`, `functions/api/products/[slug].js`, `functions/api/carousel.js`
+  - All functions use D1 binding `dala_succulents_db` from wrangler.toml
+- **Verification**: schema-check PASS, api_server.py compile OK, import_baserow.py compile OK, frontend build OK
+- **Blockers**: None
