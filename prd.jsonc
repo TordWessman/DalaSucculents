@@ -118,7 +118,7 @@
         "Step 5: Keep SPA fallback serving intact",
         "Step 6: Run verification"
       ],
-      "status": "pending",
+      "status": "complete",
       "notes": "Response shapes are specified in .planning/refactor.md under 'Response-shape recommendation'"
     },
     {

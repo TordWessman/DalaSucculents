@@ -53,3 +53,18 @@ Append-only log of session activity.
   - Schema still applied first via `schema.sql`, data exported as INSERT OR REPLACE
 - **Verification**: schema-check PASS, api_server.py syntax OK, import_baserow.py syntax OK
 - **Blockers**: None
+
+---
+
+## 2026-03-27 — Feature: api-plant-endpoints
+- **Status**: complete
+- **What was done**:
+  - Replaced old product/carousel endpoints with new plant-centric ones in `api_server.py`
+  - Implemented `GET /api/plants` — lists all plants with genus/family joined, specimen_count, for_sale_count, display_name (handles subsp/var/f./cultivar), image_url from specimens
+  - Implemented `GET /api/plants/:slug` — full plant profile with cultivation object, conservation object, countries list, specimens list (matching response shapes from refactor.md)
+  - Implemented `GET /api/filters` — returns distinct values for family, genus, vegetation_period, exposure
+  - Removed `GET /api/products`, `GET /api/products/:slug`, `GET /api/carousel` endpoints
+  - Kept SPA fallback and all auth endpoints unchanged
+  - Updated startup banner to show new API routes
+- **Verification**: schema-check PASS, api_server.py syntax OK, import_baserow.py syntax OK, frontend build OK
+- **Blockers**: None

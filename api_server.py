@@ -73,13 +73,13 @@ class DalaHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         path = urlparse(self.path).path
 
-        if path == '/api/products':
-            self._serve_products()
-        elif path.startswith('/api/products/'):
-            slug = path.split('/api/products/')[1].rstrip('/')
-            self._serve_product(slug)
-        elif path == '/api/carousel':
-            self._serve_carousel()
+        if path == '/api/plants':
+            self._serve_plants()
+        elif path.startswith('/api/plants/'):
+            slug = path.split('/api/plants/')[1].rstrip('/')
+            self._serve_plant(slug)
+        elif path == '/api/filters':
+            self._serve_filters()
         elif path == '/api/auth/me':
             self._serve_auth_me()
         else:
@@ -207,26 +207,118 @@ class DalaHandler(SimpleHTTPRequestHandler):
 
     # --- Data endpoints ---
 
-    def _serve_products(self):
+    def _serve_plants(self):
         conn = get_db()
-        products = conn.execute('SELECT * FROM products ORDER BY sort_order').fetchall()
+        rows = conn.execute('''
+            SELECT p.id, p.slug,
+                   CASE
+                       WHEN p.subspecies IS NOT NULL THEN g.name || ' ' || p.species || ' subsp. ' || p.subspecies
+                       WHEN p.variety IS NOT NULL THEN g.name || ' ' || p.species || ' var. ' || p.variety
+                       WHEN p.form IS NOT NULL THEN g.name || ' ' || p.species || ' f. ' || p.form
+                       WHEN p.cultivar IS NOT NULL THEN g.name || ' ' || p.species || ' ' || char(39) || p.cultivar || char(39)
+                       ELSE g.name || ' ' || p.species
+                   END AS display_name,
+                   g.name AS genus, g.family,
+                   p.vegetation_period,
+                   COUNT(s.id) AS specimen_count,
+                   SUM(CASE WHEN s.for_sale = 1 THEN 1 ELSE 0 END) AS for_sale_count,
+                   (SELECT s2.image_url FROM specimens s2 WHERE s2.plant_id = p.id AND s2.image_url IS NOT NULL LIMIT 1) AS image_url
+            FROM plants p
+            JOIN genera g ON g.id = p.genus_id
+            LEFT JOIN specimens s ON s.plant_id = p.id
+            GROUP BY p.id
+            ORDER BY p.sort_order, g.name, p.species
+        ''').fetchall()
         conn.close()
-        self._send_json({"results": products, "success": True})
+        self._send_json({"results": rows, "success": True})
 
-    def _serve_product(self, slug):
+    def _serve_plant(self, slug):
         conn = get_db()
-        product = conn.execute('SELECT * FROM products WHERE slug = ?', (slug,)).fetchone()
-        conn.close()
-        if product:
-            self._send_json({"result": product, "success": True})
-        else:
+        plant = conn.execute('''
+            SELECT p.*, g.name AS genus, g.family
+            FROM plants p
+            JOIN genera g ON g.id = p.genus_id
+            WHERE p.slug = ?
+        ''', (slug,)).fetchone()
+        if not plant:
+            conn.close()
             self._send_json({"error": "Not found", "success": False}, status=404)
+            return
 
-    def _serve_carousel(self):
-        conn = get_db()
-        slides = conn.execute('SELECT * FROM carousel_slides ORDER BY sort_order').fetchall()
+        # Build display_name
+        display_name = plant['genus'] + ' ' + plant['species']
+        if plant.get('subspecies'):
+            display_name += ' subsp. ' + plant['subspecies']
+        elif plant.get('variety'):
+            display_name += ' var. ' + plant['variety']
+        elif plant.get('form'):
+            display_name += ' f. ' + plant['form']
+        elif plant.get('cultivar'):
+            display_name += " '" + plant['cultivar'] + "'"
+
+        countries = [r['name'] for r in conn.execute('''
+            SELECT c.name FROM plant_countries pc
+            JOIN countries c ON c.alpha3 = pc.country_alpha3
+            WHERE pc.plant_id = ?
+            ORDER BY c.name
+        ''', (plant['id'],)).fetchall()]
+
+        specimens = conn.execute('''
+            SELECT id, specimen_code, for_sale, price, propagation_method,
+                   propagation_date, image_url
+            FROM specimens WHERE plant_id = ?
+            ORDER BY specimen_code
+        ''', (plant['id'],)).fetchall()
+        for sp in specimens:
+            sp['for_sale'] = bool(sp['for_sale'])
+
         conn.close()
-        self._send_json({"results": slides, "success": True})
+
+        result = {
+            "id": plant['id'],
+            "slug": plant['slug'],
+            "display_name": display_name,
+            "genus": plant['genus'],
+            "family": plant['family'],
+            "species": plant['species'],
+            "author_citation": plant.get('author_citation'),
+            "cultivation": {
+                "vegetation_period": plant.get('vegetation_period'),
+                "substrate": plant.get('substrate'),
+                "winter_temp_range": plant.get('winter_temp_range'),
+                "watering": plant.get('watering'),
+                "exposure": plant.get('exposure'),
+            },
+            "conservation": {
+                "red_list_status": plant.get('red_list_status'),
+                "red_list_url": plant.get('red_list_url'),
+                "cites_listing": plant.get('cites_listing'),
+                "llifle_url": plant.get('llifle_url'),
+            },
+            "countries": countries,
+            "notes": plant.get('notes'),
+            "specimens": specimens,
+        }
+        self._send_json({"result": result, "success": True})
+
+    def _serve_filters(self):
+        conn = get_db()
+        families = [r['family'] for r in conn.execute(
+            'SELECT DISTINCT family FROM genera ORDER BY family').fetchall()]
+        genus_names = [r['name'] for r in conn.execute(
+            'SELECT DISTINCT name FROM genera ORDER BY name').fetchall()]
+        vegetation_periods = [r['vegetation_period'] for r in conn.execute(
+            'SELECT DISTINCT vegetation_period FROM plants WHERE vegetation_period IS NOT NULL ORDER BY vegetation_period').fetchall()]
+        exposures = [r['exposure'] for r in conn.execute(
+            'SELECT DISTINCT exposure FROM plants WHERE exposure IS NOT NULL ORDER BY exposure').fetchall()]
+        conn.close()
+        self._send_json({
+            "family": families,
+            "genus": genus_names,
+            "vegetation_period": vegetation_periods,
+            "exposure": exposures,
+            "success": True
+        })
 
 
 def main():
@@ -241,7 +333,7 @@ def main():
 
     server = HTTPServer(('', PORT), DalaHandler)
     print(f"Serving on http://localhost:{PORT}")
-    print(f"  API: /api/products, /api/products/<slug>, /api/carousel")
+    print(f"  API: /api/plants, /api/plants/<slug>, /api/filters")
     print(f"  Auth: /api/auth/login, /api/auth/logout, /api/auth/me")
     print(f"  Static files from: {DIST_DIR}")
     try:
