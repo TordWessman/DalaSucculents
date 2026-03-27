@@ -1,28 +1,80 @@
--- Dala Succulents D1 migration schema
+-- Dala Succulents schema
+-- Plant-centric collection model: genera → plants → specimens
 -- Idempotent: safe to re-run
 
-CREATE TABLE IF NOT EXISTS products (
+CREATE TABLE IF NOT EXISTS genera (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE,
+    family TEXT NOT NULL,
+    slug TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS countries (
+    alpha3 TEXT PRIMARY KEY,
     name TEXT NOT NULL,
+    alpha2 TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS plants (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    baserow_id TEXT UNIQUE,
     slug TEXT NOT NULL UNIQUE,
-    scientific_name TEXT,
-    description TEXT,
-    price REAL NOT NULL,
-    image_url TEXT,
-    image_url_large TEXT,
-    sold_out INTEGER DEFAULT 0,
+    genus_id INTEGER NOT NULL REFERENCES genera(id),
+    species TEXT NOT NULL,
+    subspecies TEXT,
+    variety TEXT,
+    form TEXT,
+    cultivar TEXT,
+    field_number TEXT,
+    field_location TEXT,
+    author_citation TEXT,
+    -- Cultivation
+    vegetation_period TEXT,
+    substrate TEXT,
+    winter_temp_range TEXT,
+    watering TEXT,
+    exposure TEXT,
+    -- Conservation
+    red_list_status TEXT,
+    red_list_url TEXT,
+    cites_listing TEXT,
+    llifle_url TEXT,
+    -- Meta
+    notes TEXT,
     sort_order INTEGER DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS carousel_slides (
+CREATE TABLE IF NOT EXISTS plant_countries (
+    plant_id INTEGER NOT NULL REFERENCES plants(id) ON DELETE CASCADE,
+    country_alpha3 TEXT NOT NULL REFERENCES countries(alpha3),
+    PRIMARY KEY (plant_id, country_alpha3)
+);
+
+CREATE TABLE IF NOT EXISTS specimens (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    image_url TEXT NOT NULL,
-    heading TEXT NOT NULL,
-    subheading TEXT,
-    button_text TEXT,
-    button_link TEXT,
-    sort_order INTEGER DEFAULT 0
+    plant_id INTEGER NOT NULL REFERENCES plants(id) ON DELETE CASCADE,
+    specimen_code TEXT UNIQUE,
+    specimen_suffix TEXT,
+    for_sale INTEGER DEFAULT 0,
+    price REAL,
+    notes TEXT,
+    propagation_date TEXT,
+    propagation_method TEXT,
+    specimen_origin TEXT,
+    source_material_origin TEXT,
+    provenance TEXT,
+    image_url TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS cart_items (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    session_id TEXT NOT NULL,
+    specimen_id INTEGER NOT NULL REFERENCES specimens(id) ON DELETE CASCADE,
+    quantity INTEGER NOT NULL DEFAULT 1,
+    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(session_id, specimen_id)
 );
 
 CREATE TABLE IF NOT EXISTS users (
@@ -35,18 +87,3 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_login TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
--- Seed products
-INSERT INTO products (name, slug, scientific_name, description, price, image_url, image_url_large, sold_out, sort_order) VALUES
-    ('Echeveria ''Lola''', 'echeveria-lola', 'Echeveria', 'A stunning rosette succulent with pearlescent lavender-pink leaves. Echeveria ''Lola'' thrives in bright indirect light and needs watering only when the soil is completely dry. Perfect for windowsills and arrangements.', 24.99, 'https://picsum.photos/seed/echeveria/400/400', 'https://picsum.photos/seed/echeveria/800/800', 0, 1),
-    ('Haworthia cooperi', 'haworthia-cooperi', 'Haworthia', 'Known for its translucent, gem-like leaf tips that glow when backlit. Haworthia cooperi prefers bright filtered light and is very forgiving of occasional neglect. A compact grower ideal for desks and small spaces.', 18.50, 'https://picsum.photos/seed/haworthia/400/400', 'https://picsum.photos/seed/haworthia/800/800', 0, 2),
-    ('Lithops karasmontana', 'lithops-karasmontana', 'Lithops', 'These ''living stones'' mimic pebbles in their native habitat of southern Africa. Lithops require very little water — a deep soak once a month in the growing season is plenty. They produce daisy-like flowers in autumn.', 12.00, 'https://picsum.photos/seed/lithops23/400/400', 'https://picsum.photos/seed/lithops23/800/800', 0, 3),
-    ('Adenia glauca', 'adenia-glauca', 'Adenia', 'A spectacular caudiciform with a swollen grey-green trunk and delicate climbing vines. Adenia glauca stores water in its caudex and can tolerate dry periods. Provide warm temperatures and well-draining soil for best results.', 45.00, 'https://picsum.photos/seed/adenia7/400/400', 'https://picsum.photos/seed/adenia7/800/800', 1, 4),
-    ('Pachypodium lamerei', 'pachypodium-lamerei', 'Pachypodium', 'Often called the Madagascar Palm, this striking plant features a thick spiny trunk topped with glossy leaves. Pachypodium lamerei loves full sun and warmth, making it a dramatic focal point. Water sparingly in winter when it drops its leaves.', 38.00, 'https://picsum.photos/seed/pachypod/400/400', 'https://picsum.photos/seed/pachypod/800/800', 0, 5),
-    ('Euphorbia obesa', 'euphorbia-obesa', 'Euphorbia', 'A perfectly spherical succulent native to South Africa, sometimes called the Baseball Plant. Euphorbia obesa is slow-growing and extremely drought-tolerant. Handle with care as its sap can be irritating to skin.', 29.99, 'https://picsum.photos/seed/euphorbia9/400/400', 'https://picsum.photos/seed/euphorbia9/800/800', 0, 6);
-
--- Seed carousel slides
-INSERT INTO carousel_slides (image_url, heading, subheading, button_text, button_link, sort_order) VALUES
-    ('https://picsum.photos/seed/succulent1/1200/500', 'Rare & Unusual Succulents', 'Curated collection of exotic plants from around the world, delivered to your door.', 'Shop Now', '#shop', 1),
-    ('https://picsum.photos/seed/cactus42/1200/500', 'New Arrivals Weekly', 'Fresh shipments every Tuesday. Follow us for first access to rare finds.', 'View New Arrivals', '#shop', 2),
-    ('https://picsum.photos/seed/plant88/1200/500', 'Expert Care Guides', 'Every plant ships with a detailed care card. We''re here to help your plants thrive.', 'Learn More', '#shop', 3);

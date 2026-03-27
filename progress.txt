@@ -1,0 +1,17 @@
+# Ralph Progress Log
+
+Append-only log of session activity.
+
+---
+
+## 2026-03-27 — Feature: new-schema
+- **Status**: complete
+- **What was done**:
+  - Rewrote `db/schema.sql` with new plant-centric schema: genera, countries, plants, plant_countries, specimens, cart_items
+  - Kept users table unchanged
+  - Removed products and carousel_slides table definitions
+  - Updated `TABLES.md` to document all new tables and columns
+  - Created `dala.db` with new schema (all required tables verified)
+- **Verification**: schema-check PASS, api_server.py syntax OK, import_baserow.py syntax OK
+- **Blockers**: None
+

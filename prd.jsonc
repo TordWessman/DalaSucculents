@@ -1,0 +1,371 @@
+{
+  // PRD (Product Requirements Document) for Ralph autonomous loop
+  // Dala Succulents: Reshape from product storefront to plant collection site
+  //
+  // RULES FOR THE AGENT:
+  // 1. Work on ONE feature per session
+  // 2. You may ONLY update the "status" field of features
+  // 3. Run verification tests before marking any feature complete
+  // 4. Commit changes with descriptive messages
+
+  "project": {
+    "name": "DalaSucculents",
+    "description": "Reshape an e-commerce succulent storefront into a plant collection website with two modes: gallery view (plant taxonomy/cultivation) and shop view (specimen sales). React SPA + Python API + Cloudflare Pages/D1."
+  },
+
+  "verification": {
+    "commands": [
+      {
+        "name": "schema-check",
+        "command": "python -c \"import sqlite3; conn = sqlite3.connect('dala.db'); tables = [r[0] for r in conn.execute(\\\"SELECT name FROM sqlite_master WHERE type='table'\\\").fetchall()]; print('Tables:', tables); assert 'plants' in tables and 'specimens' in tables and 'genera' in tables and 'countries' in tables, f'Missing tables: {tables}'\"",
+        "description": "Verify new schema tables exist in dala.db"
+      },
+      {
+        "name": "api-server-check",
+        "command": "python -c \"import api_server\"",
+        "description": "Verify api_server imports without errors"
+      },
+      {
+        "name": "frontend-build",
+        "command": "cd frontend && npm run build",
+        "description": "Verify frontend builds successfully"
+      },
+      {
+        "name": "import-check",
+        "command": "python -c \"import import_baserow\"",
+        "description": "Verify import_baserow script imports without errors"
+      }
+    ],
+    "runAfterEachFeature": true
+  },
+
+  "features": [
+    // ── Phase 1: Domain-model reset ──────────────────────────────────────
+
+    {
+      "id": "new-schema",
+      "category": "infrastructure",
+      "description": "Rewrite db/schema.sql with the new plant-centric schema: genera, countries, plants, plant_countries, specimens, cart_items. Drop products and carousel_slides.",
+      "steps": [
+        "Step 1: Rewrite db/schema.sql with CREATE TABLE statements for genera, countries, plants, plant_countries, specimens, cart_items",
+        "Step 2: Keep the existing users table unchanged",
+        "Step 3: Remove products and carousel_slides table definitions",
+        "Step 4: Update TABLES.md to document all new tables and columns",
+        "Step 5: Run verification"
+      ],
+      "status": "complete",
+      "notes": "Schema design is fully specified in .planning/refactor.md under 'Target web schema'. Use that exactly."
+    },
+    {
+      "id": "seed-data",
+      "category": "infrastructure",
+      "description": "Rewrite db/init_db.py to create sample seed data for local development using the new schema (genera, plants, specimens, countries).",
+      "steps": [
+        "Step 1: Rewrite db/init_db.py to apply the new db/schema.sql",
+        "Step 2: Seed 3-5 genera with families (e.g., Adenia/Passifloraceae, Ariocarpus/Cactaceae, Echeveria/Crassulaceae)",
+        "Step 3: Seed 8-10 sample plants with full cultivation and conservation data",
+        "Step 4: Seed a few countries and plant_countries relationships",
+        "Step 5: Seed 5-8 specimens linked to plants (mix of for_sale true/false)",
+        "Step 6: Verify dala.db is created correctly by running the script",
+        "Step 7: Run verification"
+      ],
+      "status": "pending",
+      "notes": "Use realistic botanical data matching Baserow sample rows from refactor.md"
+    },
+    {
+      "id": "import-baserow-script",
+      "category": "functional",
+      "description": "Build import_baserow.py that fetches all four Baserow tables, resolves relationships, normalizes data, and populates the new schema.",
+      "steps": [
+        "Step 1: Create import_baserow.py with --yes flag for non-interactive mode",
+        "Step 2: Implement Baserow API fetching for all four tables (Plant Index 746875, Genus 747169, Plant Collection 748062, Country 753691)",
+        "Step 3: Build in-memory lookup maps for Genus and Country tables",
+        "Step 4: Resolve link_row relationships and extract single_select values from {id, value, color} objects",
+        "Step 5: Implement slug generation from botanical name components (genus-species-infraspecific-fieldnumber-location)",
+        "Step 6: Normalize Red List typos ('Data deficiend' → 'Data deficient', 'Critically endangerad' → 'Critically endangered')",
+        "Step 7: Insert in dependency order: genera → countries → plants → plant_countries → specimens",
+        "Step 8: Print summary of imported counts",
+        "Step 9: Run verification"
+      ],
+      "status": "pending",
+      "notes": "Drops and recreates dala.db on each run. Applies db/schema.sql first. Field ID mapping is in .planning/refactor.md under 'Baserow field ID reference'."
+    },
+    {
+      "id": "d1-migration-update",
+      "category": "infrastructure",
+      "description": "Update db/migrate_to_d1.sh to migrate the new schema and data to Cloudflare D1.",
+      "steps": [
+        "Step 1: Update migrate_to_d1.sh to export the new tables (genera, countries, plants, plant_countries, specimens, cart_items)",
+        "Step 2: Remove export of products and carousel_slides",
+        "Step 3: Ensure schema creation runs before data insertion",
+        "Step 4: Run verification"
+      ],
+      "status": "pending",
+      "notes": "Keep the same D1 database binding (DB) from wrangler.toml"
+    },
+
+    // ── Phase 2: Read-only plant site ────────────────────────────────────
+
+    {
+      "id": "api-plant-endpoints",
+      "category": "functional",
+      "description": "Add new plant-centric REST endpoints to api_server.py: GET /api/plants, GET /api/plants/:slug, GET /api/filters. Remove old product/carousel endpoints.",
+      "steps": [
+        "Step 1: Implement GET /api/plants — list all plants with genus/family joined, specimen counts",
+        "Step 2: Implement GET /api/plants/:slug — full plant profile with cultivation, conservation, countries, specimens",
+        "Step 3: Implement GET /api/filters — distinct values for family, genus, vegetation_period, exposure, etc.",
+        "Step 4: Remove GET /api/products, GET /api/products/:slug, GET /api/carousel endpoints",
+        "Step 5: Keep SPA fallback serving intact",
+        "Step 6: Run verification"
+      ],
+      "status": "pending",
+      "notes": "Response shapes are specified in .planning/refactor.md under 'Response-shape recommendation'"
+    },
+    {
+      "id": "cloudflare-plant-functions",
+      "category": "functional",
+      "description": "Create Cloudflare Pages Functions for plant endpoints and delete old product/carousel functions.",
+      "steps": [
+        "Step 1: Create functions/api/plants/index.js — GET handler listing all plants with joins",
+        "Step 2: Create functions/api/plants/[slug].js — GET handler for single plant profile",
+        "Step 3: Create functions/api/filters.js — GET handler for filter option values",
+        "Step 4: Delete functions/api/products/index.js, functions/api/products/[slug].js, functions/api/carousel.js",
+        "Step 5: Ensure D1 binding (env.DB) is used correctly in all new functions",
+        "Step 6: Run verification"
+      ],
+      "status": "pending",
+      "notes": "Must produce identical response shapes as the Python API endpoints"
+    },
+    {
+      "id": "data-services-update",
+      "category": "functional",
+      "description": "Update ApiDataService.js and D1DataService.js with new plant-centric methods. Remove old product/carousel methods.",
+      "steps": [
+        "Step 1: Add getPlants(), getPlant(slug), getFilters() to ApiDataService.js",
+        "Step 2: Add getPlants(), getPlant(slug), getFilters() to D1DataService.js",
+        "Step 3: Remove getProducts(), getProduct(), getCarouselSlides() from both services",
+        "Step 4: Update DataContext.jsx if needed",
+        "Step 5: Run verification"
+      ],
+      "status": "pending",
+      "notes": "Keep the same factory-function pattern. baseUrl configurable via VITE_API_BASE_URL."
+    },
+    {
+      "id": "sidebar-navigation",
+      "category": "functional",
+      "description": "Replace the current top nav with a slide-out sidebar menu. Menu button in header ribbon, pinned by default on desktop, overlay on mobile.",
+      "steps": [
+        "Step 1: Create frontend/src/components/Sidebar.jsx with menu items: Home, Plants, Shipping & Terms, FAQ, About, Contact",
+        "Step 2: Add menu toggle button to Header.jsx",
+        "Step 3: Implement slide-out animation, pinned state on desktop, overlay on mobile",
+        "Step 4: Add 'hide menu' control and auto-close when navigating to home",
+        "Step 5: Update Layout.jsx to integrate sidebar",
+        "Step 6: Add sidebar styles to style.css",
+        "Step 7: Run verification"
+      ],
+      "status": "pending",
+      "notes": "Single navigation system for both desktop and mobile. Treat 'pinned' as responsive behavior."
+    },
+    {
+      "id": "plant-index-page",
+      "category": "functional",
+      "description": "Build the plant index page at /plants with filterable plant cards in both list and card view.",
+      "steps": [
+        "Step 1: Create frontend/src/pages/PlantIndexPage.jsx with data fetching via useDataService",
+        "Step 2: Create frontend/src/components/PlantCard.jsx showing display_name, genus, family, image placeholder",
+        "Step 3: Create frontend/src/components/PlantGrid.jsx for card layout",
+        "Step 4: Create frontend/src/components/FilterBar.jsx with filters for family, genus, vegetation period, cacti/other succulents",
+        "Step 5: Implement client-side filtering (150 plants is fine client-side)",
+        "Step 6: Add /plants route to App.jsx",
+        "Step 7: Add plant index styles to style.css",
+        "Step 8: Run verification"
+      ],
+      "status": "pending",
+      "notes": "This is the core page of the site. Start with client-side filtering."
+    },
+    {
+      "id": "plant-profile-page",
+      "category": "functional",
+      "description": "Build the plant profile page at /plants/:slug showing full botanical data, cultivation info, conservation status, and specimen list.",
+      "steps": [
+        "Step 1: Create frontend/src/pages/PlantProfilePage.jsx with data fetching for single plant",
+        "Step 2: Implement botanical name formatting (genus italic, species italic, infraspecific ranks with abbreviations)",
+        "Step 3: Create frontend/src/components/CultivationTable.jsx with 5 cultivation fields and hover tooltips",
+        "Step 4: Display geographic distribution (country list), conservation status (Red List + CITES), external links",
+        "Step 5: Create frontend/src/components/SpecimenList.jsx showing specimens with propagation info",
+        "Step 6: Display general notes section",
+        "Step 7: Add /plants/:slug route to App.jsx",
+        "Step 8: Add plant profile styles to style.css",
+        "Step 9: Run verification"
+      ],
+      "status": "pending",
+      "notes": "Botanical-name formatting should be a dedicated utility, not ad hoc string concatenation."
+    },
+    {
+      "id": "homepage-reshape",
+      "category": "functional",
+      "description": "Reshape HomePage from product carousel + best sellers to hero section + featured plants linking to the plant index.",
+      "steps": [
+        "Step 1: Remove carousel component usage from HomePage.jsx",
+        "Step 2: Add hero section with site title and brief description",
+        "Step 3: Add featured plants section showing a few highlighted plant cards",
+        "Step 4: Add link to full plant index (/plants)",
+        "Step 5: Delete frontend/src/components/Carousel.jsx",
+        "Step 6: Delete frontend/src/components/ProductCard.jsx and ProductGrid.jsx",
+        "Step 7: Update homepage styles in style.css",
+        "Step 8: Run verification"
+      ],
+      "status": "pending",
+      "notes": "Remove all product-store placeholder content and marketing copy"
+    },
+    {
+      "id": "static-pages",
+      "category": "functional",
+      "description": "Create placeholder static pages for Shipping & Terms, FAQ, About, and Contact with routes.",
+      "steps": [
+        "Step 1: Create frontend/src/pages/ShippingTermsPage.jsx with placeholder content",
+        "Step 2: Create frontend/src/pages/FaqPage.jsx with placeholder content",
+        "Step 3: Create frontend/src/pages/AboutPage.jsx with placeholder content",
+        "Step 4: Create frontend/src/pages/ContactPage.jsx with placeholder content",
+        "Step 5: Add routes /shipping-terms, /faq, /about, /contact to App.jsx",
+        "Step 6: Update Footer.jsx links to point to new pages",
+        "Step 7: Run verification"
+      ],
+      "status": "pending",
+      "notes": "Content will be provided later. Use minimal placeholder text."
+    },
+    {
+      "id": "style-refactor",
+      "category": "functional",
+      "description": "Refactor frontend/src/style.css from product-store styling to plant-collection styling. Organize around app shell, sidebar, filter bar, plant card, plant profile, cultivation table.",
+      "steps": [
+        "Step 1: Remove product-specific styles (product-card, product-grid, carousel, best-sellers, etc.)",
+        "Step 2: Add styles for sidebar, filter bar, plant card, plant grid",
+        "Step 3: Add styles for plant profile page, cultivation table, specimen list",
+        "Step 4: Add styles for static pages",
+        "Step 5: Keep the green (#4a7c59) color scheme and Comic Sans MS font",
+        "Step 6: Ensure responsive breakpoints work at 600px and 900px",
+        "Step 7: Run verification"
+      ],
+      "status": "pending",
+      "notes": "Keep the UI intentionally minimal and content-led. Prioritize readability of botanical data."
+    },
+
+    // ── Phase 3: Shop-mode overlay ───────────────────────────────────────
+
+    {
+      "id": "view-mode-toggle",
+      "category": "functional",
+      "description": "Add a global gallery/shop mode toggle in the header. Store mode in React context + localStorage. Mode controls what is rendered (not separate API calls).",
+      "steps": [
+        "Step 1: Create frontend/src/services/ViewModeContext.jsx with gallery/shop state, persisted in localStorage",
+        "Step 2: Create frontend/src/components/ViewModeToggle.jsx as header ribbon toggle",
+        "Step 3: Add ViewModeContext provider to main.jsx",
+        "Step 4: Wire toggle into Header.jsx",
+        "Step 5: Update PlantCard.jsx to show price/availability in shop mode",
+        "Step 6: Update PlantProfilePage.jsx to show specimen purchase CTA in shop mode",
+        "Step 7: Run verification"
+      ],
+      "status": "pending",
+      "notes": "Gallery view emphasizes taxa/education. Shop view emphasizes saleable specimens and price/availability."
+    },
+    {
+      "id": "cart-api",
+      "category": "functional",
+      "description": "Add cart API endpoints to both Python server and Cloudflare Functions: GET /api/cart, POST /api/cart, DELETE /api/cart/:id.",
+      "steps": [
+        "Step 1: Implement GET /api/cart (session-based) in api_server.py",
+        "Step 2: Implement POST /api/cart (add specimen) in api_server.py",
+        "Step 3: Implement DELETE /api/cart/:id (remove item) in api_server.py",
+        "Step 4: Create functions/api/cart/index.js (GET + POST) for Cloudflare",
+        "Step 5: Create functions/api/cart/[id].js (DELETE) for Cloudflare",
+        "Step 6: Run verification"
+      ],
+      "status": "pending",
+      "notes": "Session-based cart, no login required. Cart uses session_id."
+    },
+    {
+      "id": "cart-frontend",
+      "category": "functional",
+      "description": "Build the cart page and cart context. View-only cart showing selected specimens with session persistence.",
+      "steps": [
+        "Step 1: Create frontend/src/services/CartContext.jsx with session-based cart state",
+        "Step 2: Add getCart(), addToCart(), removeFromCart() to data services",
+        "Step 3: Create frontend/src/components/CartItem.jsx",
+        "Step 4: Create frontend/src/pages/CartPage.jsx showing cart items (no checkout flow)",
+        "Step 5: Add cart icon to Header.jsx with item count badge",
+        "Step 6: Add /cart route to App.jsx",
+        "Step 7: Add CartContext provider to main.jsx",
+        "Step 8: Run verification"
+      ],
+      "status": "pending",
+      "notes": "No checkout, payment, or shipping flow. View-only."
+    },
+
+    // ── Phase 4: Auth/admin parity (deferred scope) ──────────────────────
+
+    {
+      "id": "auth-review",
+      "category": "infrastructure",
+      "description": "Review and decide on production auth strategy. Existing Google auth scaffolding works locally but has no Cloudflare equivalent.",
+      "steps": [
+        "Step 1: Audit existing auth code in AuthContext.jsx, Header.jsx, and api_server.py",
+        "Step 2: Decide whether Cloudflare auth endpoints are needed now",
+        "Step 3: If yes, implement auth Cloudflare Functions; if no, document the decision",
+        "Step 4: Define admin-only functions scope",
+        "Step 5: Run verification"
+      ],
+      "status": "pending",
+      "notes": "Auth is deferred — not required for public site. This feature is a review/decision checkpoint."
+    },
+
+    // ── Phase 5: Polish and operational hardening ────────────────────────
+
+    {
+      "id": "loading-error-states",
+      "category": "quality",
+      "description": "Add proper loading spinners, error boundaries, and empty states across all pages.",
+      "steps": [
+        "Step 1: Add loading state to PlantIndexPage and PlantProfilePage",
+        "Step 2: Add error handling for failed API calls with user-friendly messages",
+        "Step 3: Add empty states (no plants found, no specimens, empty cart)",
+        "Step 4: Run verification"
+      ],
+      "status": "pending",
+      "notes": ""
+    },
+    {
+      "id": "accessibility-pass",
+      "category": "quality",
+      "description": "Accessibility audit and fixes for sidebar, toggle, filters, tooltips, and navigation.",
+      "steps": [
+        "Step 1: Add proper ARIA labels to sidebar toggle, view mode toggle, and filter controls",
+        "Step 2: Ensure keyboard navigation works for sidebar and filters",
+        "Step 3: Add focus management for sidebar open/close",
+        "Step 4: Ensure cultivation tooltips are accessible (not hover-only)",
+        "Step 5: Run verification"
+      ],
+      "status": "pending",
+      "notes": ""
+    },
+    {
+      "id": "docs-update",
+      "category": "infrastructure",
+      "description": "Update CLAUDE.md and INSTALL.md to reflect the new architecture, routes, and commands.",
+      "steps": [
+        "Step 1: Update CLAUDE.md architecture section with new components, routes, and data flow",
+        "Step 2: Update CLAUDE.md commands section if any changed",
+        "Step 3: Update INSTALL.md with any new setup steps",
+        "Step 4: Run verification"
+      ],
+      "status": "pending",
+      "notes": "Keep docs concise and accurate"
+    }
+  ],
+
+  "completion": {
+    "allFeaturesComplete": true,
+    "allVerificationsPassing": true,
+    "marker": "<promise>COMPLETE</promise>"
+  }
+}
