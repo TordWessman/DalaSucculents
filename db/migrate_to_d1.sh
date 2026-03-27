@@ -60,6 +60,10 @@ sed -i '' 's/^INSERT INTO /INSERT OR REPLACE INTO /g' "$SEED_SQL"
 
 if [ -s "$SEED_SQL" ]; then
   echo "==> Importing data into D1..."
+  # Disable FK checks during import — INSERT OR REPLACE does DELETE+INSERT,
+  # which cascades and breaks child rows if FKs are on.
+  sed -i '' '1s/^/PRAGMA foreign_keys = OFF;\n/' "$SEED_SQL"
+  echo "PRAGMA foreign_keys = ON;" >> "$SEED_SQL"
   wrangler d1 execute "$DB_NAME" --remote --file="$SEED_SQL"
 else
   echo "==> No data to import (all tables skipped or empty)."
