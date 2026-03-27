@@ -147,7 +147,7 @@
         "Step 4: Update DataContext.jsx if needed",
         "Step 5: Run verification"
       ],
-      "status": "pending",
+      "status": "complete",
       "notes": "Keep the same factory-function pattern. baseUrl configurable via VITE_API_BASE_URL."
     },
     {

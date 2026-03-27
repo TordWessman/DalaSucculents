@@ -8,8 +8,8 @@ export function createApiDataService(baseUrl) {
   }
 
   return {
-    getProducts: () => fetchJSON('/products').then(data => data.results),
-    getProduct: (slug) => fetchJSON('/products/' + encodeURIComponent(slug)).then(data => data.result),
-    getCarouselSlides: () => fetchJSON('/carousel').then(data => data.results),
+    getPlants: () => fetchJSON('/plants').then(data => data.results),
+    getPlant: (slug) => fetchJSON('/plants/' + encodeURIComponent(slug)).then(data => data.result),
+    getFilters: () => fetchJSON('/filters').then(data => data.filters),
   };
 }
