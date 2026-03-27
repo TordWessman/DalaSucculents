@@ -83,6 +83,10 @@ cd frontend && npm run build && cd .. && wrangler pages deploy dist
 
 When `dala.db` schema changes (new tables, altered columns, seed data changes), update `TABLES.md` to match. This includes changes made via `db/schema.sql`, `db/init_db.py`, or `baserow_to_mysql.py`.
 
+## Installation Documentation
+
+When installation steps change (new dependencies, new environment variables, new external service setup), update `INSTALL.md` to match.
+
 ## Style Notes
 
 - Font is Comic Sans MS — this is intentional.
