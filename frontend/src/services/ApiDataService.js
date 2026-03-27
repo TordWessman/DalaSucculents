@@ -10,6 +10,6 @@ export function createApiDataService(baseUrl) {
   return {
     getPlants: () => fetchJSON('/plants').then(data => data.results),
     getPlant: (slug) => fetchJSON('/plants/' + encodeURIComponent(slug)).then(data => data.result),
-    getFilters: () => fetchJSON('/filters').then(data => data.filters),
+    getFilters: () => fetchJSON('/filters').then(({ success, ...filters }) => filters),
   };
 }

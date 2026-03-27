@@ -180,7 +180,7 @@
         "Step 7: Add plant index styles to style.css",
         "Step 8: Run verification"
       ],
-      "status": "pending",
+      "status": "complete",
       "notes": "This is the core page of the site. Start with client-side filtering."
     },
     {

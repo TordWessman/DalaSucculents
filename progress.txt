@@ -106,3 +106,18 @@ Append-only log of session activity.
   - Updated `frontend/src/style.css` — removed old nav-links, hamburger, and mobile-menu styles. Added sidebar, sidebar-overlay, menu-toggle, app-shell, and main-content styles. Desktop (≥900px): sidebar pinned, menu toggle hidden. Mobile: sidebar slides out as overlay with backdrop
 - **Verification**: schema-check PASS, api_server.py syntax OK, import_baserow.py syntax OK, frontend build OK
 - **Blockers**: None
+
+---
+
+## 2026-03-27 — Feature: plant-index-page
+- **Status**: complete
+- **What was done**:
+  - Created `frontend/src/components/PlantCard.jsx` — card component showing display_name (italic), family, vegetation period, image (or placeholder)
+  - Created `frontend/src/components/PlantGrid.jsx` — responsive grid layout for plant cards with empty-state message
+  - Created `frontend/src/components/FilterBar.jsx` — dropdown filters for family, genus, vegetation period with clear-all button
+  - Created `frontend/src/pages/PlantIndexPage.jsx` — fetches plants + filters via useDataService, client-side filtering with useMemo, loading/error states
+  - Added `/plants` route to `App.jsx`
+  - Added plant grid, plant card, and filter bar styles to `style.css` with responsive breakpoints (1 col mobile, 2 at 600px, 3 at 900px)
+  - Fixed `getFilters()` in both `ApiDataService.js` and `D1DataService.js` — was doing `data.filters` but API returns filter arrays at top level; now destructures `{success, ...filters}`
+- **Verification**: schema-check PASS, frontend build PASS
+- **Blockers**: None

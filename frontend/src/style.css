@@ -458,6 +458,110 @@ a { color: inherit; text-decoration: none; }
   display: inline-block;
 }
 
+/* Plant Grid */
+.plant-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.plant-grid-empty {
+  text-align: center;
+  color: var(--text-light);
+  padding: 40px 0;
+}
+
+.plant-card {
+  display: block;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+
+.plant-card:hover {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.plant-card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+}
+
+.plant-card-placeholder {
+  width: 100%;
+  height: 220px;
+  background: var(--bg-warm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.plant-card-info {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.plant-card-name {
+  font-style: italic;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.plant-card-taxonomy {
+  font-size: 0.82rem;
+  color: var(--text-light);
+}
+
+.plant-card-veg {
+  font-size: 0.78rem;
+  color: var(--text-light);
+}
+
+/* Filter Bar */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.filter-bar select {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  font-family: 'Comic Sans MS', cursive;
+  font-size: 0.85rem;
+  color: var(--text);
+  cursor: pointer;
+  min-width: 150px;
+}
+
+.filter-bar select:focus {
+  border-color: var(--green);
+  outline: none;
+}
+
+.filter-clear {
+  padding: 8px 16px;
+  background: none;
+  border: 1px solid var(--border);
+  font-family: 'Comic Sans MS', cursive;
+  font-size: 0.82rem;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.filter-clear:hover {
+  border-color: var(--green);
+  color: var(--green);
+}
+
 /* Breadcrumb */
 .breadcrumb {
   max-width: 1200px;
@@ -658,6 +762,7 @@ a { color: inherit; text-decoration: none; }
 
 /* Responsive */
 @media (min-width: 600px) {
+  .plant-grid { grid-template-columns: repeat(2, 1fr); }
   .product-grid { grid-template-columns: repeat(2, 1fr); }
   .related-grid { grid-template-columns: repeat(3, 1fr); }
   .footer-inner { grid-template-columns: repeat(2, 1fr); }
@@ -682,6 +787,7 @@ a { color: inherit; text-decoration: none; }
     display: none !important;
   }
 
+  .plant-grid { grid-template-columns: repeat(3, 1fr); }
   .product-grid { grid-template-columns: repeat(3, 1fr); }
   .product-detail { grid-template-columns: 1fr 1fr; }
   .footer-inner { grid-template-columns: 1.5fr 1fr 1fr 1.5fr; }
