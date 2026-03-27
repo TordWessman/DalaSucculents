@@ -121,3 +121,17 @@ Append-only log of session activity.
   - Fixed `getFilters()` in both `ApiDataService.js` and `D1DataService.js` — was doing `data.filters` but API returns filter arrays at top level; now destructures `{success, ...filters}`
 - **Verification**: schema-check PASS, frontend build PASS
 - **Blockers**: None
+
+---
+
+## 2026-03-27 — Feature: plant-profile-page
+- **Status**: complete
+- **What was done**:
+  - Created `frontend/src/utils/botanicalName.js` — dedicated utility for formatting botanical names with proper italicization (genus/species italic, rank abbreviations roman, cultivar names in quotes roman, author citation roman)
+  - Created `frontend/src/components/CultivationTable.jsx` — table displaying 5 cultivation fields (vegetation period, substrate, winter temp, watering, exposure) with hover tooltips on labels
+  - Created `frontend/src/components/SpecimenList.jsx` — grid of specimen cards showing code, propagation info, price, and availability status
+  - Created `frontend/src/pages/PlantProfilePage.jsx` — full plant profile page with botanical name header, cultivation table, distribution (countries), conservation status (IUCN Red List + CITES), external links (LLIFLE), notes section, and specimen list
+  - Added `/plants/:slug` route to `App.jsx`
+  - Added plant profile styles to `style.css`: botanical name, plant sections, conservation list (dl/dt/dd grid), cultivation table, specimen list/grid, and responsive breakpoints (specimen grid 2-col at 600px)
+- **Verification**: schema-check PASS, frontend build PASS (46 modules, 0 errors)
+- **Blockers**: None

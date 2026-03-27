@@ -198,7 +198,7 @@
         "Step 8: Add plant profile styles to style.css",
         "Step 9: Run verification"
       ],
-      "status": "pending",
+      "status": "complete",
       "notes": "Botanical-name formatting should be a dedicated utility, not ad hoc string concatenation."
     },
     {
