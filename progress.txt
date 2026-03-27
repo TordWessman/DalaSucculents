@@ -81,3 +81,28 @@ Append-only log of session activity.
   - All functions use D1 binding `dala_succulents_db` from wrangler.toml
 - **Verification**: schema-check PASS, api_server.py compile OK, import_baserow.py compile OK, frontend build OK
 - **Blockers**: None
+
+---
+
+## 2026-03-27 — Feature: data-services-update
+- **Status**: complete
+- **What was done**:
+  - Replaced `getProducts()`, `getProduct(slug)`, `getCarouselSlides()` with `getPlants()`, `getPlant(slug)`, `getFilters()` in `ApiDataService.js`
+  - Same replacements in `D1DataService.js` (with edge caching headers preserved)
+  - Response parsing matches new API shapes: `.results` for lists, `.result` for single plant, `.filters` for filter options
+  - `DataContext.jsx` and `main.jsx` unchanged (already service-agnostic)
+  - Old method references remain in `HomePage.jsx` and `ProductPage.jsx` — these pages will be replaced by later features (homepage-reshape, plant-index-page, plant-profile-page)
+- **Verification**: schema-check PASS, api_server.py syntax OK, import_baserow.py syntax OK, frontend build OK
+- **Blockers**: None
+
+---
+
+## 2026-03-27 — Feature: sidebar-navigation
+- **Status**: complete
+- **What was done**:
+  - Created `frontend/src/components/Sidebar.jsx` — slide-out sidebar with menu items: Home, Plants, Shipping & Terms, FAQ, About, Contact. Uses NavLink for active-state highlighting, auto-closes on navigation
+  - Updated `frontend/src/components/Header.jsx` — replaced old top nav (nav-links + hamburger + mobile-menu) with a menu toggle button. Removed search/cart icon placeholders
+  - Updated `frontend/src/components/Layout.jsx` — manages sidebar open/close state, wraps content in app-shell div with main-content area
+  - Updated `frontend/src/style.css` — removed old nav-links, hamburger, and mobile-menu styles. Added sidebar, sidebar-overlay, menu-toggle, app-shell, and main-content styles. Desktop (≥900px): sidebar pinned, menu toggle hidden. Mobile: sidebar slides out as overlay with backdrop
+- **Verification**: schema-check PASS, api_server.py syntax OK, import_baserow.py syntax OK, frontend build OK
+- **Blockers**: None

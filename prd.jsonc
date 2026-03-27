@@ -163,7 +163,7 @@
         "Step 6: Add sidebar styles to style.css",
         "Step 7: Run verification"
       ],
-      "status": "pending",
+      "status": "complete",
       "notes": "Single navigation system for both desktop and mobile. Treat 'pinned' as responsive behavior."
     },
     {

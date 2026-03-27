@@ -2,22 +2,16 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../services/AuthContext';
 
-export default function Header() {
-  const [menuOpen, setMenuOpen] = useState(false);
+export default function Header({ onMenuToggle }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { user, loading, login, logout } = useAuth();
   const googleBtnRef = useRef(null);
   const dropdownRef = useRef(null);
 
-  function toggleMenu() {
-    setMenuOpen(prev => !prev);
-  }
-
   // Render Google Sign-In button when not logged in
   useEffect(() => {
     if (loading || user || !googleBtnRef.current) return;
     if (!window.google?.accounts?.id) {
-      // GIS not loaded yet — wait for it
       const interval = setInterval(() => {
         if (window.google?.accounts?.id) {
           clearInterval(interval);
@@ -62,7 +56,6 @@ export default function Header() {
   async function handleSignOut() {
     setDropdownOpen(false);
     await logout();
-    // Revoke Google session so the button reappears fresh
     window.google?.accounts?.id?.disableAutoSelect();
   }
 
@@ -106,33 +99,21 @@ export default function Header() {
   return (
     <header className="header">
       <div className="header-inner">
+        <button
+          className="menu-toggle"
+          onClick={onMenuToggle}
+          aria-label="Toggle menu"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
         <Link to="/" className="brand">Dala Succulents</Link>
-        <nav>
-          <ul className="nav-links">
-            <li><Link to="/#shop">Shop</Link></li>
-            <li><Link to="/#about">About</Link></li>
-            <li><Link to="/#contact">Contact</Link></li>
-          </ul>
-        </nav>
         <div className="header-icons">
           {renderAuthBadge()}
-          <button aria-label="Search">
-            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          </button>
-          <button aria-label="Cart">
-            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-          </button>
-          <button className={`hamburger${menuOpen ? ' active' : ''}`} aria-label="Menu" onClick={toggleMenu}>
-            <span></span><span></span><span></span>
-          </button>
         </div>
-      </div>
-      <div className={`mobile-menu${menuOpen ? ' open' : ''}`} id="mobileMenu">
-        <ul>
-          <li><Link to="/#shop" onClick={toggleMenu}>Shop</Link></li>
-          <li><Link to="/#about" onClick={toggleMenu}>About</Link></li>
-          <li><Link to="/#contact" onClick={toggleMenu}>Contact</Link></li>
-        </ul>
       </div>
     </header>
   );
