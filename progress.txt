@@ -30,3 +30,14 @@ Append-only log of session activity.
 - **Verification**: schema-check PASS, api_server.py syntax OK, import_baserow.py syntax OK, frontend build OK
 - **Blockers**: None
 
+---
+
+## 2026-03-27 — Feature: import-baserow-script
+- **Status**: complete
+- **What was done**:
+  - Script already existed with full Baserow API fetching, lookup maps, link_row resolution, slug generation, and dependency-order insertion
+  - Added Red List typo normalization (`normalize_red_list()`) handling known Baserow typos: 'Data deficiend' → 'Data deficient', 'Critically endangerad' → 'Critically endangered', plus case normalization
+  - Fixed country link resolution in plant_countries: now looks up alpha3 from `country_map` using baserow row ID instead of using the link_row display value directly
+- **Verification**: schema-check PASS (sqlite3 .tables), api_server.py compile OK, import_baserow.py compile OK, frontend build OK
+- **Blockers**: None
+

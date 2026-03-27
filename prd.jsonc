@@ -87,7 +87,7 @@
         "Step 8: Print summary of imported counts",
         "Step 9: Run verification"
       ],
-      "status": "pending",
+      "status": "complete",
       "notes": "Drops and recreates dala.db on each run. Applies db/schema.sql first. Field ID mapping is in .planning/refactor.md under 'Baserow field ID reference'."
     },
     {
