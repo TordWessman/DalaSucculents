@@ -41,3 +41,15 @@ Append-only log of session activity.
 - **Verification**: schema-check PASS (sqlite3 .tables), api_server.py compile OK, import_baserow.py compile OK, frontend build OK
 - **Blockers**: None
 
+---
+
+## 2026-03-27 — Feature: d1-migration-update
+- **Status**: complete
+- **What was done**:
+  - Updated `db/migrate_to_d1.sh` to use explicit dependency-ordered table list instead of dynamic alphabetical query
+  - Table order: genera → countries → plants → plant_countries → specimens → cart_items (parents before children)
+  - Removed old `products` reference from verification hint, now references `plants`
+  - Kept `users` in SKIP_TABLES (not migrated to D1)
+  - Schema still applied first via `schema.sql`, data exported as INSERT OR REPLACE
+- **Verification**: schema-check PASS, api_server.py syntax OK, import_baserow.py syntax OK
+- **Blockers**: None
