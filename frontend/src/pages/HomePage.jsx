@@ -1,27 +1,18 @@
-import { useState, useEffect } from 'react';
-import { useDataService } from '../services/DataContext';
-import PlantGrid from '../components/PlantGrid';
+import { Link } from 'react-router-dom';
 
 export default function HomePage() {
-  const service = useDataService();
-  const [plants, setPlants] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    service.getPlants()
-      .then(setPlants)
-      .finally(() => setLoading(false));
-  }, [service]);
-
-  if (loading) return <div style={{ padding: '60px 20px', textAlign: 'center' }}>Loading...</div>;
-
   return (
-    <section className="section" id="shop">
-      <div className="section-header">
-        <h2>Best Sellers</h2>
-        <p>Our most popular plants, hand-selected for collectors and beginners alike.</p>
-      </div>
-      <PlantGrid plants={plants} />
+    <section className="hero">
+      <h1>Dala Succulents</h1>
+      <p className="hero-tagline">
+        Specializing in rare and unusual succulents, cacti, and caudiciform plants since 2020.
+      </p>
+      <p className="hero-about">
+        We offer a hand-curated collection of uncommon plants sourced from trusted growers
+        around the world. Every plant is carefully inspected and shipped with care to collectors
+        and enthusiasts nationwide.
+      </p>
+      <Link to="/plants" className="hero-cta">Browse Plants</Link>
     </section>
   );
 }

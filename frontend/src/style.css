@@ -197,6 +197,13 @@ a { color: inherit; text-decoration: none; }
   border-radius: 50%;
 }
 
+.auth-role-label {
+  font-size: 0.7rem;
+  color: var(--green);
+  text-transform: capitalize;
+  opacity: 0.8;
+}
+
 .auth-dropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -237,6 +244,50 @@ a { color: inherit; text-decoration: none; }
 
 .auth-dropdown-signout:hover {
   background: var(--bg-warm);
+}
+
+/* Hero Landing */
+.hero {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 2.8rem;
+  color: var(--green);
+  margin-bottom: 16px;
+}
+
+.hero-tagline {
+  font-size: 1.1rem;
+  color: var(--text-light);
+  margin-bottom: 24px;
+}
+
+.hero-about {
+  font-size: 0.95rem;
+  color: var(--text);
+  line-height: 1.8;
+  margin-bottom: 32px;
+}
+
+.hero-cta {
+  display: inline-block;
+  padding: 14px 32px;
+  background: var(--green);
+  color: #fff;
+  font-family: 'Comic Sans MS', cursive;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transition: background 0.2s;
+}
+
+.hero-cta:hover {
+  background: var(--green-dark);
 }
 
 /* Hero Carousel */

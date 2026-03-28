@@ -81,6 +81,7 @@ export default function Header({ onMenuToggle }) {
           />
           {user.role === 'admin' && <span className="auth-admin-dot" />}
         </button>
+        <span className="auth-role-label">{user.role}</span>
         {dropdownOpen && (
           <div className="auth-dropdown">
             <div className="auth-dropdown-name">{user.name}</div>
