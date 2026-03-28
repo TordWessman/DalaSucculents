@@ -1,3 +1,5 @@
+import { getSessionUser } from '../../../_auth.js';
+
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
@@ -29,6 +31,13 @@ export async function onRequestGet(context) {
 }
 
 export async function onRequestPost(context) {
+  const user = await getSessionUser(context.request, context.env);
+  if (!user || user.role !== 'admin') {
+    return Response.json({ error: 'Admin access required', success: false }, {
+      status: 403, headers: CORS_HEADERS,
+    });
+  }
+
   const { slug } = context.params;
   const db = context.env.dala_succulents_db;
   const bucket = context.env.IMAGES_BUCKET;

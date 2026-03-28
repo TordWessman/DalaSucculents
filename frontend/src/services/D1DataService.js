@@ -24,6 +24,7 @@ export function createD1DataService(baseUrl) {
       const res = await fetch(base + '/plants/' + encodeURIComponent(slug) + '/images', {
         method: 'POST',
         body: form,
+        credentials: 'include',
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
@@ -34,6 +35,7 @@ export function createD1DataService(baseUrl) {
     deletePlantImage: async (slug, imageId) => {
       const res = await fetch(base + '/plants/' + encodeURIComponent(slug) + '/images/' + imageId, {
         method: 'DELETE',
+        credentials: 'include',
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));

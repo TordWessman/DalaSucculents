@@ -39,8 +39,7 @@ export default function PlantProfilePage() {
   if (!plant) return <div className="section"><p>Plant not found.</p></div>;
 
   const nameParts = formatBotanicalName(plant);
-  const isCloudflare = import.meta.env.VITE_DATA_BACKEND === 'cloudflare';
-  const canUpload = isCloudflare ? true : user?.role === 'admin';
+  const canUpload = user?.role === 'admin';
 
   return (
     <div className="plant-profile">
