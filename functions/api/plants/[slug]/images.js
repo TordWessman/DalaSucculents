@@ -52,7 +52,7 @@ export async function onRequestPost(context) {
 
   const formData = await context.request.formData();
   const file = formData.get('file');
-  if (!file || !(file instanceof File)) {
+  if (!file || typeof file === 'string') {
     return Response.json({ error: 'Missing file', success: false }, {
       status: 400, headers: CORS_HEADERS,
     });
